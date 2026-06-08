@@ -341,6 +341,25 @@
         /* --- Informasjonsbokser --- */
         .age-setup-box { background-color: var(--bg-muted); padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid var(--border-soft); display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;}
         .age-setup-box .label { margin: 0; color: var(--text-main); }
+        .tews-mobility-control {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .tews-mobility-control .pill-group {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 760px) {
+            .tews-mobility-control {
+                margin-left: 0;
+                width: 100%;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
         
         .alert-info { background-color: #eff6ff; padding: 1rem; border-left: 4px solid #3b82f6; margin-bottom: 1.5rem; font-size: 0.875rem; color: #1e40af; }
         .text-blue-600 { color: var(--primary); font-weight: 700; }

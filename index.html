@@ -79,7 +79,6 @@
         
         <!-- Velkomstmeny -->
         <section id="welcome-menu" class="welcome-menu">
-            <p class="welcome-intro">Velg kategori</p>
             <div class="menu-grid">
                 <button class="menu-card" onclick="openCategory('triage')">
                     <p>NEWS2, TEWS, ONEWS og GCS.</p>
@@ -185,13 +184,20 @@
                 <div class="age-setup-box">
                     <label class="label">Barnets alder:</label>
                     <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" inputmode="numeric" id="tews-age-val" oninput="formatInput(this, false)" onblur="validateInput(this, 0, 15)" class="form-input" style="width: 5rem; padding-right: 0.5rem;">
+                        <input type="text" inputmode="numeric" id="tews-age-val" oninput="formatInput(this, false); calculateScore()" onblur="validateInput(this, 0, 15)" class="form-input" style="width: 5rem; padding-right: 0.5rem;">
                         <select id="tews-age-unit" class="form-select" style="width: 5.5rem; padding-right: 1.5rem;" onchange="calculateScore()">
                             <option value="m">Mnd</option>
                             <option value="y" selected>År</option>
                         </select>
                     </div>
                     <span id="tews-active-group" class="text-blue-600"></span>
+                    <div class="tews-mobility-control">
+                        <label class="label">Mobilitet</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="tews_mobility" id="t_mob_0" value="0" data-text="Normal for alder" class="hidden"><label for="t_mob_0">Normal for alder</label>
+                            <input type="radio" name="tews_mobility" id="t_mob_1" value="1" data-text="Ikke normal for alder" class="hidden"><label for="t_mob_1">Klarer ikke å bevege/gå som normalt</label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid-3">
@@ -256,13 +262,6 @@
                             <input type="radio" name="tews_avpu" id="t_a_1" value="1" data-text="Reagerer på tiltale" class="hidden"><label for="t_a_1">V: Slapp / reagerer på tiltale</label>
                             <input type="radio" name="tews_avpu" id="t_a_2" value="2" data-text="Reagerer på smerte" class="hidden"><label for="t_a_2">P: Reagerer på smerte</label>
                             <input type="radio" name="tews_avpu" id="t_a_3" value="3" data-text="Reagerer ikke" class="hidden"><label for="t_a_3">U: Reagerer ikke</label>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="label">Mobilitet</label>
-                        <div class="pill-radio pill-group">
-                            <input type="radio" name="tews_mobility" id="t_mob_0" value="0" data-text="Normal for alder" class="hidden"><label for="t_mob_0">Normal for alder</label>
-                            <input type="radio" name="tews_mobility" id="t_mob_1" value="1" data-text="Ikke normal for alder" class="hidden"><label for="t_mob_1">Klarer ikke å bevege/gå som normalt</label>
                         </div>
                     </div>
                     <div>

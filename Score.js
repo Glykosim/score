@@ -901,25 +901,26 @@ function resetForm(silent) {
 
         function syncTEWSFieldState(ageGroup) {
             var useTeenSBP = ageGroup === 5;
+            var hasValidAgeGroup = ageGroup >= 0;
             var kfCard = document.getElementById('tews-kf-card');
             var sbpCard = document.getElementById('tews-sbp-card');
             var kfInput = document.getElementById('t_kf');
             var sbpInput = document.getElementById('t_sbp');
 
             if (kfCard && sbpCard) {
-                kfCard.style.opacity = useTeenSBP ? "0.45" : "1";
-                sbpCard.style.opacity = useTeenSBP ? "1" : "0.45";
-                kfCard.setAttribute('aria-disabled', useTeenSBP ? 'true' : 'false');
-                sbpCard.setAttribute('aria-disabled', useTeenSBP ? 'false' : 'true');
+                kfCard.classList.toggle('hidden', !hasValidAgeGroup || useTeenSBP);
+                sbpCard.classList.toggle('hidden', !hasValidAgeGroup || !useTeenSBP);
+                kfCard.setAttribute('aria-disabled', (!hasValidAgeGroup || useTeenSBP) ? 'true' : 'false');
+                sbpCard.setAttribute('aria-disabled', (!hasValidAgeGroup || !useTeenSBP) ? 'true' : 'false');
             }
 
             if (kfInput) {
-                kfInput.disabled = useTeenSBP;
-                kfInput.tabIndex = useTeenSBP ? -1 : 0;
+                kfInput.disabled = !hasValidAgeGroup || useTeenSBP;
+                kfInput.tabIndex = (!hasValidAgeGroup || useTeenSBP) ? -1 : 0;
             }
             if (sbpInput) {
-                sbpInput.disabled = !useTeenSBP;
-                sbpInput.tabIndex = useTeenSBP ? 0 : -1;
+                sbpInput.disabled = !hasValidAgeGroup || !useTeenSBP;
+                sbpInput.tabIndex = (hasValidAgeGroup && useTeenSBP) ? 0 : -1;
             }
         }
 
@@ -2012,6 +2013,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             var cards = section.querySelectorAll('.input-card');
             for (var i = 0; i < cards.length; i++) {
                 var card = cards[i];
+                if (!isElementVisible(card)) continue;
                 var label = card.querySelector('.label');
                 if (!label) continue;
                 var title = label.textContent.replace(/\s+/g, ' ').trim();
