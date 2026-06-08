@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legevakt - Scoringsverktøy</title>
+    <link rel="stylesheet" href="Score.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-row">
+            <h1 id="app-title">
+                <!-- Inline SVG Hjerterytme -->
+                <svg class="icon icon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Legevakt - Scoringsverktøy
+            </h1>
+            <div class="header-actions">
+                <button id="settings-toggle" class="icon-btn" type="button" onclick="toggleSettingsPanel()" aria-label="Åpne verktøy" aria-expanded="false" aria-controls="settings-panel">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.92 4.6H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.36.49.86.82 1.51 1H21a2 2 0 1 1 0 4h-.09c-.65.18-1.15.51-1.51 1z"></path></svg>
+                </button>
+                <div id="settings-panel" class="settings-panel hidden" role="dialog" aria-label="Verktøy">
+                    <div class="settings-panel-header">
+                        <strong>Verktøy</strong>
+                        <button class="icon-btn settings-close" type="button" onclick="closeSettingsPanel()" aria-label="Lukk verktøy">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                    <label class="settings-field">
+                        <span>Startside</span>
+                        <select id="setting-home-page" class="form-select" onchange="handleSettingChange('homePage', this.value)">
+                            <option value="main">Hovedside</option>
+                            <option value="triage">Triage</option>
+                            <option value="other">Andre scores</option>
+                        </select>
+                    </label>
+                    <label class="settings-field">
+                        <span>Tekststørrelse</span>
+                        <select id="setting-text-size" class="form-select" onchange="handleSettingChange('textSize', this.value)">
+                            <option value="base">Standard</option>
+                            <option value="large">Stor</option>
+                            <option value="xlarge">Ekstra stor</option>
+                        </select>
+                    </label>
+                    <label class="settings-toggle-row">
+                        <span>Mørk modus</span>
+                        <input id="setting-dark-mode" type="checkbox" onchange="handleSettingChange('darkMode', this.checked ? '1' : '0')">
+                    </label>
+                    <label class="settings-toggle-row">
+                        <span>Skjul forklarende tekst for scoringsystemer</span>
+                        <input id="setting-hide-score-info" type="checkbox" onchange="handleSettingChange('hideScoreInfo', this.checked ? '1' : '0')">
+                    </label>
+                    <div class="settings-print-block">
+                        <span class="settings-print-title">Infoskriv</span>
+                        <div class="settings-print-row">
+                            <select id="tool-patient-sheet-lang" class="form-select" onchange="setToolPatientSheetLanguage(this.value)">
+                                <option value="no">Norsk</option>
+                                <option value="en">Engelsk</option>
+                                <option value="de">Tysk</option>
+                                <option value="pl">Polsk</option>
+                                <option value="fr">Fransk</option>
+                                <option value="es">Spansk</option>
+                                <option value="ar">Arabisk</option>
+                                <option value="zh">Kinesisk</option>
+                                <option value="uk">Ukrainsk</option>
+                                <option value="pt">Portugisisk</option>
+                                <option value="ja">Japansk</option>
+                            </select>
+                            <button type="button" class="reset-btn settings-print-btn" onclick="printPatientSheetFromTools()">Skriv ut</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Velkomstmeny -->
+        <section id="welcome-menu" class="welcome-menu">
+            <p class="welcome-intro">Velg kategori</p>
+            <div class="menu-grid">
+                <button class="menu-card" onclick="openCategory('triage')">
+                    <p>NEWS2, TEWS, ONEWS og GCS.</p>
+                </button>
+                <button class="menu-card" onclick="openCategory('other')">
+                    <p>qSOFA, CIWA-Ar, CHA2DS2-VASc, Wells, CURB-65, SIRS, NIHSS, ABCD2, Mantrel og GCS.</p>
+                </button>
+            </div>
+        </section>
+
+        <div id="category-toolbar" class="category-toolbar hidden">
+            <span id="category-title" class="category-title"></span>
+            <button class="back-menu-btn" onclick="requestShowWelcomeMenu()">← Tilbake til hovedmeny</button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <nav class="tabs-nav hidden" id="main-nav">
+            <button onclick="switchTab('news2')" class="tab-btn active" data-target="news2" data-category="triage">NEWS2</button>
+            <button onclick="switchTab('tews')" class="tab-btn" data-target="tews" data-category="triage">TEWS</button>
+            <button onclick="switchTab('onews')" class="tab-btn" data-target="onews" data-category="triage" title="For gravide fra uke 20 og inntil 6 uker postpartum.">ONEWS</button>
+            <button onclick="switchTab('gcs')" class="tab-btn" data-target="gcs" data-category="triage other">GCS</button>
+            <button onclick="switchTab('qsofa')" class="tab-btn" data-target="qsofa" data-category="other">qSOFA</button>
+            <button onclick="switchTab('ciwa')" class="tab-btn" data-target="ciwa" data-category="other">CIWA-Ar</button>
+            <button onclick="switchTab('chads')" class="tab-btn" data-target="chads" data-category="other">CHA2DS2-VASc</button>
+            <button onclick="switchTab('wells-dvt')" class="tab-btn" data-target="wells-dvt" data-category="other">Wells DVT</button>
+            <button onclick="switchTab('wells-le')" class="tab-btn" data-target="wells-le" data-category="other">Wells LE</button>
+            <button onclick="switchTab('curb65')" class="tab-btn" data-target="curb65" data-category="other">CURB-65</button>
+            <button onclick="switchTab('sirs')" class="tab-btn" data-target="sirs" data-category="other">SIRS</button>
+            <button onclick="switchTab('nihss')" class="tab-btn" data-target="nihss" data-category="other">NIHSS</button>
+            <button onclick="switchTab('abcd2')" class="tab-btn" data-target="abcd2" data-category="other">ABCD2</button>
+            <button onclick="switchTab('mantrel')" class="tab-btn" data-target="mantrel" data-category="other">Mantrel</button>
+        </nav>
+
+        <!-- Content Wrap -->
+        <div class="content-wrap hidden">
+            
+            <!-- NEWS2 Section -->
+            <section id="news2" class="calc-section active">
+                <div class="news2-layout">
+                    <div class="input-card news2-card">
+                        <label class="label">Resp. frekvens</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="n2_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 70)" class="form-input">
+                            <span class="input-unit">/min</span>
+                        </div>
+                    </div>
+                    <div class="input-card news2-card">
+                        <label class="label">Puls</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="n2_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 200)" class="form-input">
+                            <span class="input-unit">/min</span>
+                        </div>
+                    </div>
+                    <div class="input-card news2-card">
+                        <label class="label">Systolisk BT</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="n2_bp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
+                            <span class="input-unit">mmHg</span>
+                        </div>
+                    </div>
+                    <div class="input-card news2-card">
+                        <label class="label">Tilførsel av oksygen</label>
+                        <div class="pill-radio pill-group-row news2-pill-row">
+                            <input type="radio" name="n2_o2" id="n2_o2_0" value="0" data-text="Nei" class="hidden"><label for="n2_o2_0">Nei</label>
+                            <input type="radio" name="n2_o2" id="n2_o2_2" value="2" data-text="Ja" class="hidden"><label for="n2_o2_2">Ja</label>
+                        </div>
+                    </div>
+                    <div class="input-card news2-card">
+                        <label class="label">Temperatur</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="decimal" id="n2_temp" oninput="formatInput(this, true)" onblur="validateInput(this, 35, 41)" class="form-input">
+                            <span class="input-unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="input-card news2-card">
+                        <label class="label">SpO2 (%)</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="n2_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
+                            <span class="input-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="news2-stack news2-wide">
+                        <div class="input-card news2-card">
+                            <label class="label">Bevissthet (ACVPU)</label>
+                            <div class="pill-radio pill-group">
+                                <input type="radio" name="n2_avpu" id="n2_a_0" value="0" data-text="A (Våken)" class="hidden"><label for="n2_a_0">A (Våken / Normal)</label>
+                                <input type="radio" name="n2_avpu" id="n2_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="n2_a_3">C/V/P/U (Forvirring, smerte, sløv)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-card news2-card news2-scale-card">
+                        <label class="label">SpO2-skala</label>
+                        <select id="news2-scale" class="form-select" tabindex="-1" onchange="handleScaleChange()">
+                            <option value="1" selected>Skala 1 (Standard)</option>
+                            <option value="2">Skala 2 (KOLS/hyperkapnisk svikt)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TEWS Section -->
+            <section id="tews" class="calc-section">
+                <div class="age-setup-box">
+                    <label class="label">Barnets alder:</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" inputmode="numeric" id="tews-age-val" oninput="formatInput(this, false)" onblur="validateInput(this, 0, 15)" class="form-input" style="width: 5rem; padding-right: 0.5rem;">
+                        <select id="tews-age-unit" class="form-select" style="width: 5.5rem; padding-right: 1.5rem;" onchange="calculateScore()">
+                            <option value="m">Mnd</option>
+                            <option value="y" selected>År</option>
+                        </select>
+                    </div>
+                    <span id="tews-active-group" class="text-blue-600"></span>
+                </div>
+
+                <div class="grid-3">
+                    <div class="input-card">
+                        <label class="label">Resp. frekvens</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="t_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 90)" class="form-input">
+                            <span class="input-unit">/min</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Puls</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="t_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 240)" class="form-input">
+                            <span class="input-unit">/min</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">SaO2 / SpO2</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="t_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
+                            <span class="input-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Temperatur</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="decimal" id="t_temp" oninput="formatInput(this, true)" onblur="validateInput(this, 30, 43)" class="form-input">
+                            <span class="input-unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="input-card" id="tews-kf-card">
+                        <label class="label">Kapillærfyllingstid</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="t_kf" oninput="formatInput(this, false)" onblur="validateInput(this, 0, 10)" class="form-input">
+                            <span class="input-unit">sek</span>
+                        </div>
+                        <div class="tews-context-note">Brukes for barn under 13 år.</div>
+                    </div>
+                    <div class="input-card" id="tews-sbp-card">
+                        <label class="label">Systolisk BT</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="t_sbp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
+                            <span class="input-unit">mmHg</span>
+                        </div>
+                        <div class="tews-context-note">Brukes for ungdom 13-15 år.</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <label class="label">Oksygentilførsel ved SaO2/SpO2-måling</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="tews_o2" id="t_o2_0" value="0" data-text="Uten O2" class="hidden"><label for="t_o2_0">Uten O2</label>
+                            <input type="radio" name="tews_o2" id="t_o2_1" value="1" data-text="Med O2" class="hidden"><label for="t_o2_1">Med O2</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="label">Bevissthet (AVPU)</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="tews_avpu" id="t_a_0" value="0" data-text="Våken/normal" class="hidden"><label for="t_a_0">A: Våken / normal kontakt</label>
+                            <input type="radio" name="tews_avpu" id="t_a_1" value="1" data-text="Reagerer på tiltale" class="hidden"><label for="t_a_1">V: Slapp / reagerer på tiltale</label>
+                            <input type="radio" name="tews_avpu" id="t_a_2" value="2" data-text="Reagerer på smerte" class="hidden"><label for="t_a_2">P: Reagerer på smerte</label>
+                            <input type="radio" name="tews_avpu" id="t_a_3" value="3" data-text="Reagerer ikke" class="hidden"><label for="t_a_3">U: Reagerer ikke</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="label">Mobilitet</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="tews_mobility" id="t_mob_0" value="0" data-text="Normal for alder" class="hidden"><label for="t_mob_0">Normal for alder</label>
+                            <input type="radio" name="tews_mobility" id="t_mob_1" value="1" data-text="Ikke normal for alder" class="hidden"><label for="t_mob_1">Klarer ikke å bevege/gå som normalt</label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="label">Skade</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="tews_injury" id="t_inj_0" value="0" data-text="Nei" class="hidden"><label for="t_inj_0">Nei</label>
+                            <input type="radio" name="tews_injury" id="t_inj_1" value="1" data-text="Ja" class="hidden"><label for="t_inj_1">Ja</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- qSOFA Section -->
+            <section id="qsofa" class="calc-section">
+               <div class="score-info">Brukes ved mistenkt infeksjon for å identifisere pasienter med økt risiko for sepsisrelatert dårlig utfall.</div>
+                <div id="qsofa-form">
+                    <!-- Genereres av JS -->
+                </div>
+            </section>
+
+            <!-- ONEWS Section -->
+            <section id="onews" class="calc-section">
+                <div class="grid-3">
+                    <div class="input-card">
+                        <label class="label">Resp. frekvens</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="o_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 70)" class="form-input">
+                            <span class="input-unit">/min</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Puls</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="o_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 200)" class="form-input">
+                            <span class="input-unit">/min</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">SpO2 (%)</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="o_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
+                            <span class="input-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Systolisk BT</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="o_sbp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
+                            <span class="input-unit">mmHg</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Diastolisk BT</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="numeric" id="o_dbp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 200)" class="form-input">
+                            <span class="input-unit">mmHg</span>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Temperatur</label>
+                        <div class="input-wrapper">
+                            <input type="text" inputmode="decimal" id="o_temp" oninput="formatInput(this, true)" onblur="validateInput(this, 35, 41)" class="form-input">
+                            <span class="input-unit">°C</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GCS Section -->
+            <section id="gcs" class="calc-section">
+               <div class="score-info">Brukes til å vurdere bevissthetsnivå og nevrologisk påvirkning. Lavere score uttrykker mer alvorlig påvirkning.</div>
+                <div class="grid-3">
+                    <div class="input-card">
+                        <label class="label">Øyeåpning (E)</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="gcs_e" id="gcs_e_4" value="4" class="hidden"><label for="gcs_e_4">Spontan</label>
+                            <input type="radio" name="gcs_e" id="gcs_e_3" value="3" class="hidden"><label for="gcs_e_3">Ved tiltale</label>
+                            <input type="radio" name="gcs_e" id="gcs_e_2" value="2" class="hidden"><label for="gcs_e_2">Ved smertestimuli</label>
+                            <input type="radio" name="gcs_e" id="gcs_e_1" value="1" class="hidden"><label for="gcs_e_1">Ingen</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Verbal respons (V)</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="gcs_v" id="gcs_v_5" value="5" class="hidden"><label for="gcs_v_5">Orientert</label>
+                            <input type="radio" name="gcs_v" id="gcs_v_4" value="4" class="hidden"><label for="gcs_v_4">Forvirret</label>
+                            <input type="radio" name="gcs_v" id="gcs_v_3" value="3" class="hidden"><label for="gcs_v_3">Inadekvate ord</label>
+                            <input type="radio" name="gcs_v" id="gcs_v_2" value="2" class="hidden"><label for="gcs_v_2">Uforståelige lyder</label>
+                            <input type="radio" name="gcs_v" id="gcs_v_1" value="1" class="hidden"><label for="gcs_v_1">Ingen</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Motorisk respons (M)</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="gcs_m" id="gcs_m_6" value="6" class="hidden"><label for="gcs_m_6">Følger oppfordring</label>
+                            <input type="radio" name="gcs_m" id="gcs_m_5" value="5" class="hidden"><label for="gcs_m_5">Lokaliserer smerte</label>
+                            <input type="radio" name="gcs_m" id="gcs_m_4" value="4" class="hidden"><label for="gcs_m_4">Trekker seg unna</label>
+                            <input type="radio" name="gcs_m" id="gcs_m_3" value="3" class="hidden"><label for="gcs_m_3">Abnorm fleksjon</label>
+                            <input type="radio" name="gcs_m" id="gcs_m_2" value="2" class="hidden"><label for="gcs_m_2">Ekstensjon</label>
+                            <input type="radio" name="gcs_m" id="gcs_m_1" value="1" class="hidden"><label for="gcs_m_1">Ingen</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CIWA-Ar Section -->
+            <section id="ciwa" class="calc-section">
+               <div class="score-info">Brukes til å vurdere alvorlighetsgrad av alkoholabstinens og behov for observasjon eller medikamentell behandling.</div>
+                <div class="grid-2" id="ciwa-form-grid">
+                    <!-- Genereres av JavaScript -->
+                </div>
+            </section>
+            
+            <!-- CHA2DS2-VASc Section -->
+            <section id="chads" class="calc-section">
+               <div class="score-info">Brukes ved atrieflimmer for å vurdere risiko for hjerneslag og behov for antikoagulasjon.</div>
+                <div class="grid-2" style="margin-bottom: 1.5rem;">
+                    <div class="input-card">
+                        <label class="label">Kjønn</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="chads_sex" id="chads_sex_m" value="0" class="hidden"><label for="chads_sex_m">Mann (0p)</label>
+                            <input type="radio" name="chads_sex" id="chads_sex_k" value="1" class="hidden"><label for="chads_sex_k">Kvinne (1p)</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Alder</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="chads_age" id="chads_age_0" value="0" class="hidden"><label for="chads_age_0">&lt; 65 år (0p)</label>
+                            <input type="radio" name="chads_age" id="chads_age_1" value="1" class="hidden"><label for="chads_age_1">65 - 74 år (1p)</label>
+                            <input type="radio" name="chads_age" id="chads_age_2" value="2" class="hidden"><label for="chads_age_2">&ge; 75 år (2p)</label>
+                        </div>
+                    </div>
+                </div>
+                <div id="chads-form">
+                    <!-- Genereres av JS -->
+                </div>
+            </section>
+
+            <!-- Wells DVT Section -->
+            <section id="wells-dvt" class="calc-section">
+               <div class="score-info">Brukes ved mistanke om dyp venetrombose for å estimere klinisk sannsynlighet før eventuell videre utredning.</div>
+                <div id="wells-dvt-form">
+                    <!-- Checkboxes generated by JS -->
+                </div>
+            </section>
+
+            <!-- Wells LE Section -->
+            <section id="wells-le" class="calc-section">
+               <div class="score-info">Brukes ved mistanke om lungeemboli for å estimere klinisk sannsynlighet før eventuell videre utredning.</div>
+                <div id="wells-le-form">
+                    <!-- Checkboxes generated by JS -->
+                </div>
+            </section>
+
+            <!-- CURB-65 Section -->
+            <section id="curb65" class="calc-section">
+               <div class="score-info">Brukes ved pneumoni for å vurdere alvorlighetsgrad og behov for innleggelse eller tettere oppfølging.</div>
+                <div id="curb65-form"></div>
+            </section>
+
+            <!-- SIRS Section -->
+            <section id="sirs" class="calc-section">
+               <div class="score-info">Brukes til å identifisere systemisk inflammasjonsrespons. Må tolkes i klinisk sammenheng.</div>
+                <div id="sirs-form"></div>
+            </section>
+
+            <!-- NIHSS Section -->
+            <section id="nihss" class="calc-section">
+               <div class="score-info">Brukes ved hjerneslag for å beskrive og gradere nevrologiske utfall.</div>
+                <div class="grid-2" id="nihss-form-grid"></div>
+            </section>
+
+            <!-- ABCD2 Section -->
+            <section id="abcd2" class="calc-section">
+               <div class="score-info">Brukes etter TIA for å estimere tidlig risiko for hjerneslag.</div>
+                <div class="grid-2">
+                    <div class="input-card">
+                        <label class="label">Alder</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="abcd_age" id="abcd_age_0" value="0" class="hidden"><label for="abcd_age_0">&lt; 60 år (0p)</label>
+                            <input type="radio" name="abcd_age" id="abcd_age_1" value="1" class="hidden"><label for="abcd_age_1">≥ 60 år (1p)</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Blodtrykk</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="abcd_bp" id="abcd_bp_0" value="0" class="hidden"><label for="abcd_bp_0">Under grense (0p)</label>
+                            <input type="radio" name="abcd_bp" id="abcd_bp_1" value="1" class="hidden"><label for="abcd_bp_1">≥ 140/90 (1p)</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Kliniske trekk</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="abcd_clin" id="abcd_clin_0" value="0" class="hidden"><label for="abcd_clin_0">Annet / ingen (0p)</label>
+                            <input type="radio" name="abcd_clin" id="abcd_clin_1" value="1" class="hidden"><label for="abcd_clin_1">Talevansker uten svakhet (1p)</label>
+                            <input type="radio" name="abcd_clin" id="abcd_clin_2" value="2" class="hidden"><label for="abcd_clin_2">Unilateral svakhet (2p)</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Varighet</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="abcd_duration" id="abcd_dur_0" value="0" class="hidden"><label for="abcd_dur_0">&lt; 10 minutter (0p)</label>
+                            <input type="radio" name="abcd_duration" id="abcd_dur_1" value="1" class="hidden"><label for="abcd_dur_1">10-59 minutter (1p)</label>
+                            <input type="radio" name="abcd_duration" id="abcd_dur_2" value="2" class="hidden"><label for="abcd_dur_2">≥ 60 minutter (2p)</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Diabetes</label>
+                        <div class="pill-radio pill-group-row">
+                            <input type="radio" name="abcd_diabetes" id="abcd_dm_0" value="0" class="hidden"><label for="abcd_dm_0">Nei (0p)</label>
+                            <input type="radio" name="abcd_diabetes" id="abcd_dm_1" value="1" class="hidden"><label for="abcd_dm_1">Ja (1p)</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mantrel Section -->
+            <section id="mantrel" class="calc-section">
+               <div class="score-info">Brukes ved mistanke om akutt appendisitt for å støtte klinisk vurdering og beslutning om videre utredning.</div>
+                <div id="mantrel-form"></div>
+            </section>
+        </div>
+
+    
+        <section id="advanced-news2-page" class="advanced-page hidden">
+            <div class="advanced-title-row"><h2>Avansert hastegradvurdering</h2><button class="reset-btn" onclick="closeAdvancedNEWS2()">← Tilbake til NEWS2</button></div>
+                        
+            <table class="advanced-table">
+                <thead>
+                    <tr>
+                        <th class="advanced-q"></th>
+                        <th class="advanced-yn">JA</th>
+                        <th class="advanced-yn">NEI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Bruker pasienten faste medisiner?</td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q1" value="ja" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q1" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                    </tr>
+                    <tr>
+                        <td>Har pasienten nylig vært i kontakt med helsepersonell om det pasienten søker hjelp for nå?</td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q2" value="ja" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q2" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Pasienten har ikke:</strong><br>
+                            - Diabetes type 1 eller 2<br>
+                            - Kronisk rusmiddelbruk<br>
+                            - Leversvikt eller nyresvikt<br>
+                            - Pågående kreftbehandling<br>
+                            - Alvorlig fedme (BMI over 40)<br>
+                            - Nedsatt immunforsvar som følge av sykdom eller behandling<br>
+                            - Sykdom eller skade med redusert lungekapasitet og/eller hostekraft<br>
+                            - KOLS/astma<br>
+                            - Hjerte- og karsykdom
+                        </td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q3" value="ja" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q3" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Pasienten er ikke:</strong><br>
+                            - Gravid<br>
+                            - Beboer i sykehjem eller omsorgsbolig
+                        </td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q4" value="ja" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q4" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                    </tr>
+                    <tr>
+                        <td>Er pasienten usikker på om det er trygt å dra hjem, eller ønsker pasienten legevurdering likevel?</td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q5" value="ja" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q5" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <div id="advanced-news2-result" class="advanced-result">
+                Svar på alle spørsmålene.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Footer for Score Result -->
+    <footer class="score-footer hidden">
+        <div class="footer-content">
+            <div class="score-display-wrap">
+                <div id="score-display" class="score-circle score-0">0</div>
+                <div class="score-text-wrap">
+                    <p class="score-label">Total Score</p>
+                    <p class="score-interpretation" id="score-interpretation">Fyll inn felter...</p>
+                </div>
+            </div>
+
+                <div class="footer-advanced-wrap">
+                    <button id="advanced-news2-btn" class="advanced-btn hidden" onclick="openAdvancedNEWS2()">Avansert hastegradvurdering</button>
+                </div>
+            <div class="footer-buttons">
+                <button onclick="resetForm()" class="reset-btn">
+                    <!-- Inline SVG Nullstill -->
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    Nullstill
+                </button>
+                <button id="copy-btn" onclick="copyToClipboard()" class="copy-btn" disabled aria-disabled="true">
+                    <!-- Inline SVG Kopier -->
+                    <svg class="icon icon-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Kopier
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        Kopiert til utklippstavlen!
+    </div>
+
+
+    
+    <div id="patient-sheet-modal" class="modal-backdrop">
+        <div class="modal-content" style="max-width: 44rem;">
+            <h3 class="modal-title" id="patient-sheet-title">Infoskriv</h3>
+            <div id="patient-sheet-body" class="patient-sheet"></div>
+            <div class="patient-sheet-actions">
+                <button class="modal-btn-ok" onclick="printPatientSheet()">Skriv ut</button>
+                <button class="modal-btn-cancel" onclick="closePatientSheet()">Lukk</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="modal-title">Om verktøyet</h3>
+            <div class="modal-text">
+                Scoringssystem for Bergen legevakt, utviklet av Arild Iversen, 2026.\n\nScoringsverktøyene skal ikke erstatte klinisk skjønn.\n\nFeil eller forbedringsforslag kan meldes til arild.iversen@bergen.kommune.no
+            </div>
+            <div class="modal-actions-centered">
+                <button class="modal-btn-ok" onclick="hideAboutModal()">Lukk</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div id="confirm-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <h3 class="modal-title">Bekreft endring av skala</h3>
+            <div id="modal-body" class="modal-text"></div>
+            <div class="modal-actions">
+                <button id="modal-btn-no" class="modal-btn-cancel">Nei, bruk Skala 1</button>
+                <button id="modal-btn-yes" class="modal-btn-confirm">Ja, bruk Skala 2</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="Score.js"></script>
+</body>
+</html>
+
+
