@@ -4,6 +4,18 @@ function showAboutModal() {
         function hideAboutModal() {
             document.getElementById('about-modal').classList.remove('show');
         }
+        function showSourcesModal() {
+            document.getElementById('sources-modal').classList.add('show');
+        }
+        function hideSourcesModal() {
+            document.getElementById('sources-modal').classList.remove('show');
+        }
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') hideSourcesModal();
+        });
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.id === 'sources-modal') hideSourcesModal();
+        });
 
 
         function openAdvancedNEWS2() {
@@ -326,7 +338,7 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
         ];
 
         var chadsData = [
-            { text: "Hjertesvikt (Congestive heart failure)", val: 1 },
+            { text: "Hjertesvikt", val: 1 },
             { text: "Hypertensjon", val: 1 },
             { text: "Diabetes mellitus", val: 1 },
             { text: "Tidligere hjerneslag / TIA / tromboembolisme", val: 2 },
@@ -358,7 +370,6 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
 
         var curb65Data = [
             { text: "Konfusjon", val: 1 },
-            { text: "Urea > 7 mmol/L", val: 1 },
             { text: "Respirasjonsfrekvens ≥ 30 /min", val: 1 },
             { text: "Systolisk BT < 90 eller diastolisk BT ≤ 60 mmHg", val: 1 },
             { text: "Alder ≥ 65 år", val: 1 }
@@ -447,6 +458,27 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
                     el.value = parts[0] + sep + parts.slice(1).join('');
                 }
             }
+            try{updateHeaderByCategory(localStorage.getItem('scoreCategory'));}catch(e){}
+            calculateScore();
+        }
+
+        function formatAbcdSbpInput(el) {
+            formatInput(el, false);
+            if (el.value.length >= 3) {
+                var dbp = document.getElementById('abcd_dbp');
+                if (dbp && document.activeElement === el) dbp.focus();
+            }
+        }
+
+        function formatTemperatureInput(el, event) {
+            var digits = el.value.replace(/\D/g, '').slice(0, 3);
+            var isBackspace = event && event.inputType === 'deleteContentBackward';
+            if (isBackspace && el.value.indexOf(',') === -1 && digits.length > 0) {
+                digits = digits.slice(0, -1);
+            }
+            if (digits.length > 2) el.value = digits.slice(0, 2) + ',' + digits.slice(2);
+            else if (digits.length > 0) el.value = digits + ',';
+            else el.value = '';
             try{updateHeaderByCategory(localStorage.getItem('scoreCategory'));}catch(e){}
             calculateScore();
         }
@@ -570,7 +602,6 @@ function updateHeaderByCategory(cat){
         function applyTextSize(size) {
             document.body.classList.remove('text-large', 'text-xlarge');
             if (size === 'large') document.body.classList.add('text-large');
-            else if (size === 'xlarge') document.body.classList.add('text-xlarge');
         }
 
         function applyDarkMode(isEnabled) {
@@ -583,17 +614,22 @@ function updateHeaderByCategory(cat){
 
         function syncSettingsUI() {
             var homeSelect = document.getElementById('setting-home-page');
-            var sizeSelect = document.getElementById('setting-text-size');
+            var sizeRadios = document.querySelectorAll('input[name="setting-text-size"]');
             var darkToggle = document.getElementById('setting-dark-mode');
             var hideScoreInfoToggle = document.getElementById('setting-hide-score-info');
             if (homeSelect) homeSelect.value = getSetting('homePage');
-            if (sizeSelect) sizeSelect.value = getSetting('textSize');
+            var textSize = getSetting('textSize') === 'xlarge' ? 'large' : getSetting('textSize');
+            for (var i = 0; i < sizeRadios.length; i++) {
+                sizeRadios[i].checked = sizeRadios[i].value === textSize;
+            }
             if (darkToggle) darkToggle.checked = getSetting('darkMode') === '1';
             if (hideScoreInfoToggle) hideScoreInfoToggle.checked = getSetting('hideScoreInfo') === '1';
         }
 
         function initializeSettings() {
-            applyTextSize(getSetting('textSize'));
+            var textSize = getSetting('textSize');
+            if (textSize === 'xlarge') textSize = 'large';
+            applyTextSize(textSize);
             applyDarkMode(getSetting('darkMode') === '1');
             applyHideScoreInfo(getSetting('hideScoreInfo') === '1');
             syncSettingsUI();
@@ -601,6 +637,7 @@ function updateHeaderByCategory(cat){
         }
 
         function handleSettingChange(name, value) {
+            if (name === 'textSize' && value === 'xlarge') value = 'large';
             setCookie('scoretool-' + name, value, settingsCookieDays);
             try {
                 localStorage.setItem('scoretool-' + name, value);
@@ -633,7 +670,8 @@ function updateHeaderByCategory(cat){
             currentCategory = null;
             closeSettingsPanel();
             document.getElementById('welcome-menu').classList.remove('hidden');
-            document.getElementById('category-toolbar').classList.add('hidden');
+            document.getElementById('sources-link').classList.remove('hidden');
+            document.getElementById('header-back-btn').classList.add('hidden');
             document.getElementById('main-nav').classList.add('hidden');
             document.querySelector('.content-wrap').classList.add('hidden');
             document.querySelector('.score-footer').classList.add('hidden');
@@ -645,11 +683,11 @@ function updateHeaderByCategory(cat){
             closeSettingsPanel();
             localStorage.setItem('scoretool-category', category);
             document.getElementById('welcome-menu').classList.add('hidden');
-            document.getElementById('category-toolbar').classList.remove('hidden');
+            document.getElementById('sources-link').classList.add('hidden');
+            document.getElementById('header-back-btn').classList.remove('hidden');
             document.getElementById('main-nav').classList.remove('hidden');
             document.querySelector('.content-wrap').classList.remove('hidden');
             document.querySelector('.score-footer').classList.remove('hidden');
-            document.getElementById('category-title').textContent = category === 'triage' ? 'Triage' : 'Andre scores';
 
             var visibleTargets = [];
             var btns = document.querySelectorAll('.tab-btn');
@@ -662,6 +700,44 @@ function updateHeaderByCategory(cat){
 
             var target = preferredTab && visibleTargets.indexOf(preferredTab) !== -1 ? preferredTab : visibleTargets[0];
             switchTab(target);
+        }
+
+        function copyTextValueIfPresent(fromId, toId) {
+            var from = document.getElementById(fromId);
+            var to = document.getElementById(toId);
+            if (from && to && from.value !== '') to.value = from.value;
+        }
+
+        function copyRadioValueIfPresent(fromName, toName) {
+            var from = getCheckedRadio(fromName);
+            if (!from) return;
+            var to = document.querySelector('input[name="' + toName + '"][value="' + from.value + '"]');
+            if (to) to.checked = true;
+        }
+
+        function setSepsisQsofaFromNews2(name, isYes) {
+            var target = document.querySelector('input[name="' + name + '"][value="' + (isYes ? '1' : '0') + '"]');
+            if (target) target.checked = true;
+        }
+
+        function syncNews2ToSepsis() {
+            copyTextValueIfPresent('n2_resp', 'sx_resp');
+            copyTextValueIfPresent('n2_spo2', 'sx_spo2');
+            copyTextValueIfPresent('n2_bp', 'sx_bp');
+            copyTextValueIfPresent('n2_puls', 'sx_puls');
+            copyTextValueIfPresent('n2_temp', 'sx_temp');
+            copyRadioValueIfPresent('n2_o2', 'sx_o2');
+            copyRadioValueIfPresent('n2_avpu', 'sx_avpu');
+            var newsScale = document.getElementById('news2-scale');
+            var sepsisScale = document.getElementById('sx_scale');
+            if (newsScale && sepsisScale) sepsisScale.value = newsScale.value;
+
+            var resp = getNum('n2_resp');
+            var bp = getNum('n2_bp');
+            var avpu = getCheckedRadio('n2_avpu');
+            if (!isNaN(resp)) setSepsisQsofaFromNews2('sepsis_qsofa_0', resp >= 22);
+            if (avpu) setSepsisQsofaFromNews2('sepsis_qsofa_1', avpu.value === '3');
+            if (!isNaN(bp)) setSepsisQsofaFromNews2('sepsis_qsofa_2', bp <= 100);
         }
 
         function switchTab(tabId) {
@@ -680,6 +756,7 @@ function updateHeaderByCategory(cat){
             if (activeBtn) activeBtn.classList.add('active');
             
             currentTab = tabId;
+            if (tabId === 'sepsis') syncNews2ToSepsis();
             localStorage.setItem('scoretool-tab', tabId);
             syncChoiceTabState();
             calculateScore();
@@ -812,6 +889,7 @@ function resetForm(silent) {
             document.getElementById('wells-le-form').innerHTML = buildChecklistHTML(wellsLEData, 'le');
             if (document.getElementById('mantrel-form')) document.getElementById('mantrel-form').innerHTML = buildChecklistHTML(mantrelData, 'mantrel');
             document.getElementById('qsofa-form').innerHTML = buildChecklistHTML(qSofaData, 'qsofa');
+            document.getElementById('sepsis-qsofa-form').innerHTML = buildChecklistHTML(qSofaData, 'sepsis_qsofa');
             document.getElementById('chads-form').innerHTML = buildChecklistHTML(chadsData, 'chads');
             document.getElementById('curb65-form').innerHTML = buildChecklistHTML(curb65Data, 'curb65');
             document.getElementById('sirs-form').innerHTML = buildChecklistHTML(sirsData, 'sirs');
@@ -1679,6 +1757,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             document.getElementById('score-interpretation').textContent = interpretation;
             if (typeof updateAdvancedNEWS2Button === 'function') updateAdvancedNEWS2Button(score);
             updateCopyButtonState(score);
+            updateScoreBreakdownTooltip();
         }
         function setTriageInterpretation(score, hasSingleRed) {
             if (score <= 0) return { text: "Grønn - haster ikke", cls: "score-0" };
@@ -1721,7 +1800,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
         function updateCopyButtonState(score) {
             var btn = document.getElementById('copy-btn');
             if (!btn) return;
-            currentScoreComplete = score !== "-" && score !== null && typeof score !== 'undefined' && !isNaN(score);
+            currentScoreComplete = score !== "-" && score !== null && typeof score !== 'undefined' && (currentTab === 'sepsis' || !isNaN(score));
             btn.disabled = !currentScoreComplete;
             btn.setAttribute('aria-disabled', currentScoreComplete ? 'false' : 'true');
             btn.classList.toggle('copy-btn-ready', currentScoreComplete);
@@ -1769,6 +1848,53 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                     if (!o2Radio) missingNews2++;
                     if (!avpuRadio) missingNews2++;
                     interpretation = buildMissingText(missingNews2, 7);
+                }
+            } else if (currentTab === 'sepsis') {
+                var sxResp = getNum('sx_resp');
+                var sxSpo2 = getNum('sx_spo2');
+                var sxBp = getNum('sx_bp');
+                var sxPuls = getNum('sx_puls');
+                var sxTemp = getNum('sx_temp');
+                var sxScale = document.getElementById('sx_scale').value;
+                var sxO2Radio = getCheckedRadio('sx_o2');
+                var sxAvpuRadio = getCheckedRadio('sx_avpu');
+                var sxO2 = sxO2Radio ? parseInt(sxO2Radio.value, 10) : null;
+                var sxAvpu = sxAvpuRadio ? parseInt(sxAvpuRadio.value, 10) : null;
+                var sxRespS = calcNEWS2Resp(sxResp);
+                var sxSpo2S = calcNEWS2SpO2(sxSpo2, sxScale, sxO2 || 0);
+                var sxBpS = calcNEWS2BP(sxBp);
+                var sxPulsS = calcNEWS2Pulse(sxPuls);
+                var sxTempS = calcNEWS2Temp(sxTemp);
+                updateInputColor('sx_resp', sxRespS, isNaN(sxResp));
+                updateInputColor('sx_spo2', sxSpo2S, isNaN(sxSpo2));
+                updateInputColor('sx_bp', sxBpS, isNaN(sxBp));
+                updateInputColor('sx_puls', sxPulsS, isNaN(sxPuls));
+                updateInputColor('sx_temp', sxTempS, isNaN(sxTemp));
+                var sxNewsComplete = allPresent([sxResp, sxSpo2, sxBp, sxPuls, sxTemp]) && sxO2Radio && sxAvpuRadio;
+                var sxQsofa = calcChecklistScore('sepsis-qsofa-form');
+                var sxComplete = sxNewsComplete && sxQsofa.checkedCount === sxQsofa.totalRows && sxQsofa.totalRows > 0;
+                if (sxComplete) {
+                    var sxNewsScore = sxRespS + sxSpo2S + sxBpS + sxPulsS + sxTempS + sxO2 + sxAvpu;
+                    var sxHasRed = sxRespS === 3 || sxSpo2S === 3 || sxBpS === 3 || sxPulsS === 3 || sxTempS === 3 || sxAvpu === 3;
+                    score = sxNewsScore + '/' + sxQsofa.score;
+                    if (sxNewsScore >= 5 || sxHasRed || sxQsofa.score >= 2) {
+                        interpretation = "Høy risiko ved mistenkt sepsis";
+                        colorClass = "score-high";
+                    } else {
+                        interpretation = "Lavere risiko, vurder klinisk";
+                        colorClass = "score-0";
+                    }
+                } else {
+                    var missingSepsis = 0;
+                    if (isNaN(sxResp)) missingSepsis++;
+                    if (isNaN(sxSpo2)) missingSepsis++;
+                    if (isNaN(sxBp)) missingSepsis++;
+                    if (isNaN(sxPuls)) missingSepsis++;
+                    if (isNaN(sxTemp)) missingSepsis++;
+                    if (!sxO2Radio) missingSepsis++;
+                    if (!sxAvpuRadio) missingSepsis++;
+                    missingSepsis += sxQsofa.totalRows - sxQsofa.checkedCount;
+                    interpretation = buildMissingText(missingSepsis, 10);
                 }
             } else if (currentTab === 'onews') {
                 var oResp = getNum('o_resp');
@@ -1947,8 +2073,8 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                 var calcCurb = calcChecklistScore('curb65-form');
                 if (calcCurb.checkedCount === calcCurb.totalRows && calcCurb.totalRows > 0) {
                     score = calcCurb.score;
-                    if (score <= 1) { interpretation = "Lav risiko"; colorClass = "score-0"; }
-                    else if (score === 2) { interpretation = "Moderat risiko"; colorClass = "score-low"; }
+                    if (score === 0) { interpretation = "Lav risiko"; colorClass = "score-0"; }
+                    else if (score <= 2) { interpretation = "Moderat risiko"; colorClass = "score-low"; }
                     else { interpretation = "Høy risiko"; colorClass = "score-high"; }
                 } else {
                     interpretation = buildMissingText(calcCurb.totalRows - calcCurb.checkedCount, calcCurb.totalRows);
@@ -1975,23 +2101,30 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                     interpretation = buildMissingText(calcNihss.total - calcNihss.filled, calcNihss.total);
                 }
             } else if (currentTab === 'abcd2') {
-                var abcdNames = ['abcd_age', 'abcd_bp', 'abcd_clin', 'abcd_duration', 'abcd_diabetes'];
-                var abcdScore = 0;
-                var abcdFilled = 0;
-                for (var a = 0; a < abcdNames.length; a++) {
-                    var abcdRadio = getCheckedRadio(abcdNames[a]);
+                var abcdRisk = calcChecklistScore('abcd-risk-form');
+                var abcdSbp = getNum('abcd_sbp');
+                var abcdDbp = getNum('abcd_dbp');
+                var abcdBpFilled = !isNaN(abcdSbp) && !isNaN(abcdDbp);
+                var abcdBpScore = abcdBpFilled && (abcdSbp >= 140 || abcdDbp >= 90) ? 1 : 0;
+                var abcdScore = abcdRisk.score + abcdBpScore;
+                var abcdExtraNames = ['abcd_clin', 'abcd_duration'];
+                var abcdExtraFilled = 0;
+                for (var a = 0; a < abcdExtraNames.length; a++) {
+                    var abcdRadio = getCheckedRadio(abcdExtraNames[a]);
                     if (abcdRadio) {
-                        abcdFilled++;
+                        abcdExtraFilled++;
                         abcdScore += parseInt(abcdRadio.value, 10);
                     }
                 }
-                if (abcdFilled === abcdNames.length) {
+                var abcdTotalFields = abcdRisk.totalRows + 1 + abcdExtraNames.length;
+                var abcdFilled = abcdRisk.checkedCount + (abcdBpFilled ? 1 : 0) + abcdExtraFilled;
+                if (abcdFilled === abcdTotalFields) {
                     score = abcdScore;
                     if (score <= 3) { interpretation = "Lav risiko"; colorClass = "score-0"; }
                     else if (score <= 5) { interpretation = "Moderat risiko"; colorClass = "score-low"; }
                     else { interpretation = "Høy risiko"; colorClass = "score-high"; }
                 } else {
-                    interpretation = buildMissingText(abcdNames.length - abcdFilled, abcdNames.length);
+                    interpretation = buildMissingText(abcdTotalFields - abcdFilled, abcdTotalFields);
                 }
             } else if (currentTab === 'mantrel') {
                 var calcMantrel = calcChecklistScore('mantrel-form');
@@ -2024,7 +2157,302 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
         function getCheckedLabelText(input) {
             if (!input || !input.id) return '';
             var label = document.querySelector('label[for="' + input.id + '"]');
-            return label ? label.textContent.replace(/\s+/g, ' ').trim() : input.value;
+            if (!label) return input.value;
+            var clone = label.cloneNode(true);
+            var badges = clone.querySelectorAll('.choice-point-badge');
+            for (var i = 0; i < badges.length; i++) badges[i].remove();
+            return clone.textContent.replace(/\s+/g, ' ').trim();
+        }
+
+        function formatPointValue(value) {
+            var num = parseFloat(value);
+            if (isNaN(num)) return value + ' poeng';
+            return (num % 1 === 0 ? String(num) : String(num).replace('.', ',')) + ' poeng';
+        }
+
+        function formatBreakdownLine(label, value, points) {
+            return label + (value ? ': ' + value : '') + ' = ' + formatPointValue(points);
+        }
+
+        function getTextValueWithUnit(id) {
+            var input = document.getElementById(id);
+            if (!input || input.value === '') return '';
+            var card = input.closest('.input-card');
+            var unit = card ? card.querySelector('.input-unit') : null;
+            return input.value + (unit ? ' ' + unit.textContent.trim() : '');
+        }
+
+        function getCardLabelByInputName(name) {
+            var input = getCheckedRadio(name);
+            if (!input) return '';
+            var card = input.closest('.input-card');
+            var label = card ? card.querySelector('.label') : null;
+            return label ? label.textContent.replace(/\s+/g, ' ').trim() : '';
+        }
+
+        function getCheckedRadioBreakdown(name, labelOverride) {
+            var input = getCheckedRadio(name);
+            if (!input) return null;
+            return formatBreakdownLine(labelOverride || getCardLabelByInputName(name), getCheckedLabelText(input), input.value);
+        }
+
+        function getSelectBreakdownLines(selector) {
+            var lines = [];
+            var selects = document.querySelectorAll(selector);
+            for (var i = 0; i < selects.length; i++) {
+                var select = selects[i];
+                if (select.value === '') continue;
+                var card = select.closest('.input-card');
+                var label = card ? card.querySelector('.label') : null;
+                var title = label ? label.textContent.replace(/\s+/g, ' ').trim() : select.id;
+                lines.push(formatBreakdownLine(title, select.options[select.selectedIndex].text.trim(), select.value));
+            }
+            return lines;
+        }
+
+        function getChecklistBreakdownLines(containerId) {
+            var lines = [];
+            var container = document.getElementById(containerId);
+            if (!container) return lines;
+            var rows = container.querySelectorAll('.wells-row');
+            for (var i = 0; i < rows.length; i++) {
+                var checked = rows[i].querySelector('input[type="radio"]:checked, input[type="checkbox"]:checked');
+                if (!checked) continue;
+                var text = rows[i].querySelector('.wells-text');
+                var label = text ? text.textContent.replace(/\s+/g, ' ').trim() : checked.name;
+                lines.push(formatBreakdownLine(label, getCheckedLabelText(checked), checked.value));
+            }
+            return lines;
+        }
+
+        function getAbcdBreakdownLines() {
+            var lines = getChecklistBreakdownLines('abcd-risk-form');
+            var sbp = getNum('abcd_sbp');
+            var dbp = getNum('abcd_dbp');
+            if (!isNaN(sbp) && !isNaN(dbp)) {
+                var bpScore = (sbp >= 140 || dbp >= 90) ? 1 : 0;
+                lines.push(formatBreakdownLine('Blodtrykk', sbp + '/' + dbp + ' mmHg', bpScore));
+            }
+            var fields = [
+                { name: 'abcd_duration', label: 'Varighet' },
+                { name: 'abcd_clin', label: 'Kliniske trekk' }
+            ];
+            for (var j = 0; j < fields.length; j++) {
+                var input = getCheckedRadio(fields[j].name);
+                if (!input) continue;
+                var line = formatBreakdownLine(fields[j].label, getCheckedLabelText(input), input.value);
+                if (line) lines.push(line);
+            }
+            return lines;
+        }
+
+        function getNews2BreakdownLines() {
+            var scale = document.getElementById('news2-scale').value;
+            var o2Radio = getCheckedRadio('n2_o2');
+            var o2 = o2Radio ? parseInt(o2Radio.value, 10) : 0;
+            var items = [
+                { label: 'Resp. frekvens', id: 'n2_resp', score: calcNEWS2Resp(getNum('n2_resp')) },
+                { label: 'SpO2', id: 'n2_spo2', score: calcNEWS2SpO2(getNum('n2_spo2'), scale, o2) },
+                { label: 'Systolisk BT', id: 'n2_bp', score: calcNEWS2BP(getNum('n2_bp')) },
+                { label: 'Puls', id: 'n2_puls', score: calcNEWS2Pulse(getNum('n2_puls')) },
+                { label: 'Temperatur', id: 'n2_temp', score: calcNEWS2Temp(getNum('n2_temp')) }
+            ];
+            var lines = [];
+            for (var i = 0; i < items.length; i++) lines.push(formatBreakdownLine(items[i].label, getTextValueWithUnit(items[i].id), items[i].score));
+            lines.push(formatBreakdownLine('Tilførsel av oksygen', getCheckedLabelText(o2Radio), o2Radio.value));
+            var avpuRadio = getCheckedRadio('n2_avpu');
+            lines.push(formatBreakdownLine('Bevissthet (ACVPU)', getCheckedLabelText(avpuRadio), avpuRadio.value));
+            return lines;
+        }
+
+        function getSepsisBreakdownLines() {
+            var scale = document.getElementById('sx_scale').value;
+            var o2Radio = getCheckedRadio('sx_o2');
+            var o2 = o2Radio ? parseInt(o2Radio.value, 10) : 0;
+            var avpuRadio = getCheckedRadio('sx_avpu');
+            var lines = [
+                formatBreakdownLine('NEWS2 resp. frekvens', getTextValueWithUnit('sx_resp'), calcNEWS2Resp(getNum('sx_resp'))),
+                formatBreakdownLine('NEWS2 SpO2', getTextValueWithUnit('sx_spo2'), calcNEWS2SpO2(getNum('sx_spo2'), scale, o2)),
+                formatBreakdownLine('NEWS2 systolisk BT', getTextValueWithUnit('sx_bp'), calcNEWS2BP(getNum('sx_bp'))),
+                formatBreakdownLine('NEWS2 puls', getTextValueWithUnit('sx_puls'), calcNEWS2Pulse(getNum('sx_puls'))),
+                formatBreakdownLine('NEWS2 temperatur', getTextValueWithUnit('sx_temp'), calcNEWS2Temp(getNum('sx_temp'))),
+                formatBreakdownLine('NEWS2 oksygen', getCheckedLabelText(o2Radio), o2Radio.value),
+                formatBreakdownLine('NEWS2 bevissthet', getCheckedLabelText(avpuRadio), avpuRadio.value)
+            ];
+            return lines.concat(getChecklistBreakdownLines('sepsis-qsofa-form'));
+        }
+
+        function getOnewsBreakdownLines() {
+            var items = [
+                { label: 'Resp. frekvens', id: 'o_resp', score: calcONEWSResp(getNum('o_resp')) },
+                { label: 'SpO2', id: 'o_spo2', score: calcONEWSSpO2(getNum('o_spo2')) },
+                { label: 'Systolisk BT', id: 'o_sbp', score: calcONEWSSBP(getNum('o_sbp')) },
+                { label: 'Diastolisk BT', id: 'o_dbp', score: calcONEWSDBP(getNum('o_dbp')) },
+                { label: 'Puls', id: 'o_puls', score: calcONEWSPulse(getNum('o_puls')) },
+                { label: 'Temperatur', id: 'o_temp', score: calcONEWSTemp(getNum('o_temp')) }
+            ];
+            var lines = [];
+            for (var i = 0; i < items.length; i++) lines.push(formatBreakdownLine(items[i].label, getTextValueWithUnit(items[i].id), items[i].score));
+            return lines;
+        }
+
+        function getTewsBreakdownLines() {
+            var ageVal = getNum('tews-age-val');
+            var ageUnit = document.getElementById('tews-age-unit').value;
+            var ageGroup = getTewsAgeGroup(ageVal, ageUnit);
+            var rules = tewsRanges[ageGroup];
+            var o2Radio = getCheckedRadio('tews_o2');
+            var avpuRadio = getCheckedRadio('tews_avpu');
+            var mobRadio = getCheckedRadio('tews_mobility');
+            var injRadio = getCheckedRadio('tews_injury');
+            var useTeenSBP = ageGroup === 5;
+            var lines = [];
+            lines.push('Aldersgruppe: ' + rules.name);
+            lines.push(formatBreakdownLine('Resp. frekvens', getTextValueWithUnit('t_resp'), evalRule(getNum('t_resp'), rules.resp)));
+            lines.push(formatBreakdownLine('Puls', getTextValueWithUnit('t_puls'), evalRule(getNum('t_puls'), rules.puls)));
+            lines.push(formatBreakdownLine('SaO2 / SpO2', getTextValueWithUnit('t_spo2'), calcSpO2TEWS(getNum('t_spo2'), o2Radio && o2Radio.value === '1')));
+            lines.push(formatBreakdownLine('Temperatur', getTextValueWithUnit('t_temp'), evalRule(getNum('t_temp'), rules.temp)));
+            if (useTeenSBP) lines.push(formatBreakdownLine('Systolisk BT', getTextValueWithUnit('t_sbp'), calcTeenSBPTEWS(getNum('t_sbp'))));
+            else lines.push(formatBreakdownLine('Kapillærfyllingstid', getTextValueWithUnit('t_kf'), calcKFTEWS(getNum('t_kf'))));
+            lines.push(formatBreakdownLine('Skade', getCheckedLabelText(injRadio), injRadio.value));
+            lines.push(formatBreakdownLine('Normal mobilitet', getCheckedLabelText(mobRadio), mobRadio.value));
+            lines.push('Ekstra oksygentilførsel: ' + getCheckedLabelText(o2Radio) + ' (inngår i SaO2 / SpO2-poeng)');
+            lines.push(formatBreakdownLine('Bevissthet (AVPU)', getCheckedLabelText(avpuRadio), avpuRadio.value));
+            return lines;
+        }
+
+        function buildScoreBreakdownForCurrentTab() {
+            var lines = [];
+            if (currentTab === 'news2') lines = getNews2BreakdownLines();
+            else if (currentTab === 'sepsis') lines = getSepsisBreakdownLines();
+            else if (currentTab === 'tews') lines = getTewsBreakdownLines();
+            else if (currentTab === 'onews') lines = getOnewsBreakdownLines();
+            else if (currentTab === 'ciwa') lines = getSelectBreakdownLines('#ciwa .ciwa-select');
+            else if (currentTab === 'nihss') lines = getSelectBreakdownLines('#nihss .ciwa-select');
+            else if (currentTab === 'gcs') lines = [
+                getCheckedRadioBreakdown('gcs_e', 'Øyeåpning (E)'),
+                getCheckedRadioBreakdown('gcs_v', 'Verbal respons (V)'),
+                getCheckedRadioBreakdown('gcs_m', 'Motorisk respons (M)')
+            ].filter(Boolean);
+            else if (currentTab === 'abcd2') lines = getAbcdBreakdownLines();
+            else if (currentTab === 'chads') lines = [
+                getCheckedRadioBreakdown('chads_sex', 'Kjønn'),
+                getCheckedRadioBreakdown('chads_age', 'Alder')
+            ].filter(Boolean).concat(getChecklistBreakdownLines('chads-form'));
+            else if (currentTab === 'qsofa') lines = getChecklistBreakdownLines('qsofa-form');
+            else if (currentTab === 'wells-dvt') lines = getChecklistBreakdownLines('wells-dvt-form');
+            else if (currentTab === 'wells-le') lines = getChecklistBreakdownLines('wells-le-form');
+            else if (currentTab === 'curb65') lines = getChecklistBreakdownLines('curb65-form');
+            else if (currentTab === 'sirs') lines = getChecklistBreakdownLines('sirs-form');
+            else if (currentTab === 'mantrel') lines = getChecklistBreakdownLines('mantrel-form');
+            var score = document.getElementById('score-display').textContent.trim();
+            var totalLine = currentTab === 'sepsis' ? 'NEWS2/qSOFA = ' + score : 'Totalt = ' + score + ' poeng';
+            return ['Poengberegning'].concat(lines, [totalLine]).join('\n');
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getPointTone(pointText) {
+            var value = parseFloat(String(pointText).replace(',', '.'));
+            if (isNaN(value)) return 'warn';
+            if (value <= 0) return 'good';
+            if (value === 1) return 'warn';
+            return 'bad';
+        }
+
+        function getGcsPointTone(label, pointText) {
+            var value = parseInt(pointText, 10);
+            if (/Øyeåpning/.test(label)) {
+                if (value === 4) return 'good';
+                if (value === 3) return 'warn-good';
+                if (value === 2) return 'warn';
+                return 'bad';
+            }
+            if (/Verbal/.test(label)) {
+                if (value === 5) return 'good';
+                if (value === 4) return 'warn-good';
+                if (value === 3) return 'warn';
+                return 'bad';
+            }
+            if (/Motorisk/.test(label)) {
+                if (value === 6) return 'good';
+                if (value >= 4) return 'warn-good';
+                if (value === 3) return 'warn';
+                return 'bad';
+            }
+            return getPointTone(pointText);
+        }
+
+        function splitBreakdownLine(line) {
+            var match = line.match(/^(.*?)(?:\s*=\s*)(-?\d+(?:[,.]\d+)?) poeng$/);
+            if (!match) return { note: line };
+            var left = match[1];
+            var pointText = match[2] + ' p';
+            var label = left;
+            var value = '';
+            var colonIndex = left.indexOf(': ');
+            if (colonIndex !== -1) {
+                label = left.substring(0, colonIndex);
+                value = left.substring(colonIndex + 2);
+            }
+            var tone = currentTab === 'gcs' ? getGcsPointTone(label, match[2]) : getPointTone(match[2]);
+            return { label: label, value: value, points: pointText, tone: tone };
+        }
+
+        function buildScoreBreakdownHtml(text) {
+            var lines = text.split('\n');
+            var title = lines.shift() || 'Poengberegning';
+            var rows = [];
+            for (var i = 0; i < lines.length; i++) {
+                var row = splitBreakdownLine(lines[i]);
+                if (row.note) {
+                    rows.push('<tr class="score-breakdown-note"><td></td><td colspan="2">' + escapeHtml(row.note) + '</td></tr>');
+                    continue;
+                }
+                var isTotal = /^Totalt$/i.test(row.label);
+                var tone = row.tone;
+                if (isTotal) {
+                    var scoreCircle = document.getElementById('score-display');
+                    if (scoreCircle && scoreCircle.classList.contains('score-0')) tone = 'good';
+                    else if (scoreCircle && scoreCircle.classList.contains('score-low')) tone = 'warn';
+                    else if (scoreCircle && scoreCircle.classList.contains('score-med')) tone = 'med';
+                    else if (scoreCircle && scoreCircle.classList.contains('score-high')) tone = 'bad';
+                }
+                rows.push(
+                    '<tr class="' + (isTotal ? 'score-breakdown-total' : '') + '">' +
+                        '<td class="score-breakdown-dot-cell"><span class="score-breakdown-dot ' + tone + '"></span></td>' +
+                        '<td><span class="score-breakdown-item">' + escapeHtml(row.label) + '</span>' +
+                            (row.value ? '<span class="score-breakdown-value">' + escapeHtml(row.value) + '</span>' : '') +
+                        '</td>' +
+                        '<td class="score-breakdown-points">' + escapeHtml(row.points) + '</td>' +
+                    '</tr>'
+                );
+            }
+            return '<div class="score-breakdown-title">' + escapeHtml(title) + '</div>' +
+                '<table class="score-breakdown-table"><tbody>' + rows.join('') + '</tbody></table>';
+        }
+
+        function updateScoreBreakdownTooltip() {
+            var trigger = document.getElementById('score-breakdown-trigger');
+            var tooltip = document.getElementById('score-breakdown-tooltip');
+            if (!trigger || !tooltip) return;
+            if (!currentScoreComplete) {
+                tooltip.innerHTML = '';
+                trigger.classList.remove('has-breakdown');
+                trigger.removeAttribute('aria-label');
+                return;
+            }
+            var text = buildScoreBreakdownForCurrentTab();
+            tooltip.innerHTML = buildScoreBreakdownHtml(text);
+            trigger.classList.add('has-breakdown');
+            trigger.setAttribute('aria-label', text);
         }
 
         function collectCardSummary(section) {
@@ -2047,10 +2475,18 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                 var title = label.textContent.replace(/\s+/g, ' ').trim();
                 var value = '';
 
-                var textInput = card.querySelector('input[type="text"]');
-                if (textInput && textInput.value) {
+                var textInputs = card.querySelectorAll('input[type="text"]');
+                if (textInputs.length > 1) {
+                    var values = [];
+                    for (var t = 0; t < textInputs.length; t++) {
+                        if (textInputs[t].value) values.push(textInputs[t].value);
+                    }
+                    if (values.length === textInputs.length) {
+                        value = card.id === 'abcd-bp-card' ? values.join('/') + ' mmHg' : values.join(' / ');
+                    }
+                } else if (textInputs.length === 1 && textInputs[0].value) {
                     var unit = card.querySelector('.input-unit');
-                    value = textInput.value + (unit ? ' ' + unit.textContent.trim() : '');
+                    value = textInputs[0].value + (unit ? ' ' + unit.textContent.trim() : '');
                 } else {
                     var select = card.querySelector('select');
                     if (select && select.value) {
@@ -2100,6 +2536,14 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             if (checklist.length) {
                 lines.push('', 'Positive funn:');
                 lines = lines.concat(checklist.map(function(item) { return '- ' + item; }));
+            }
+            if (currentTab === 'abcd2') {
+                var scoreLines = getAbcdBreakdownLines();
+                if (scoreLines.length) {
+                    lines.push('', 'Poengberegning:');
+                    lines = lines.concat(scoreLines.map(function(item) { return '- ' + item; }));
+                    lines.push('- Totalt = ' + score + ' poeng');
+                }
             }
             return lines.join('\n');
         }
@@ -2206,7 +2650,8 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             var adv = document.getElementById('advanced-news2-page');
             if (adv) adv.classList.add('hidden');
             document.getElementById('welcome-menu').classList.remove('hidden');
-            document.getElementById('category-toolbar').classList.add('hidden');
+            document.getElementById('sources-link').classList.remove('hidden');
+            document.getElementById('header-back-btn').classList.add('hidden');
             document.getElementById('main-nav').classList.add('hidden');
             document.querySelector('.content-wrap').classList.add('hidden');
             document.querySelector('.score-footer').classList.add('hidden');

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="no">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,7 @@
                 Legevakt - Scoringsverktøy
             </h1>
             <div class="header-actions">
+                <button id="header-back-btn" class="back-menu-btn hidden" type="button" onclick="requestShowWelcomeMenu()">← Tilbake til hovedmeny</button>
                 <button id="settings-toggle" class="icon-btn" type="button" onclick="toggleSettingsPanel()" aria-label="Åpne verktøy" aria-expanded="false" aria-controls="settings-panel">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.92 4.6H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.36.49.86.82 1.51 1H21a2 2 0 1 1 0 4h-.09c-.65.18-1.15.51-1.51 1z"></path></svg>
                 </button>
@@ -35,14 +36,13 @@
                             <option value="other">Andre scores</option>
                         </select>
                     </label>
-                    <label class="settings-field">
+                    <div class="settings-field">
                         <span>Tekststørrelse</span>
-                        <select id="setting-text-size" class="form-select" onchange="handleSettingChange('textSize', this.value)">
-                            <option value="base">Standard</option>
-                            <option value="large">Stor</option>
-                            <option value="xlarge">Ekstra stor</option>
-                        </select>
-                    </label>
+                        <div class="settings-radio-group">
+                            <label><input type="radio" name="setting-text-size" value="base" onchange="handleSettingChange('textSize', this.value)"> Standard</label>
+                            <label><input type="radio" name="setting-text-size" value="large" onchange="handleSettingChange('textSize', this.value)"> Stor</label>
+                        </div>
+                    </div>
                     <label class="settings-toggle-row">
                         <span>Mørk modus</span>
                         <input id="setting-dark-mode" type="checkbox" onchange="handleSettingChange('darkMode', this.checked ? '1' : '0')">
@@ -81,35 +81,31 @@
         <section id="welcome-menu" class="welcome-menu">
             <div class="menu-grid">
                 <button class="menu-card" onclick="openCategory('triage')">
-                    <p>NEWS2, TEWS, ONEWS og GCS.</p>
+                    <p>NEWS2, Sepsis, TEWS, ONEWS og GCS.</p>
                 </button>
                 <button class="menu-card" onclick="openCategory('other')">
-                    <p>qSOFA, CIWA-Ar, CHA₂DS₂-VASc, Wells, CURB-65, SIRS, NIHSS, ABCD2, Mantrel og GCS.</p>
+                    <p>qSOFA, CIWA-Ar, CHA₂DS₂-VASc, Wells, CRB-65, SIRS, NIHSS, ABCD2 og Mantrel.</p>
                 </button>
             </div>
         </section>
-
-        <div id="category-toolbar" class="category-toolbar hidden">
-            <span id="category-title" class="category-title"></span>
-            <button class="back-menu-btn" onclick="requestShowWelcomeMenu()">← Tilbake til hovedmeny</button>
-        </div>
-
+        <button id="sources-link" class="sources-floating-link" type="button" onclick="showSourcesModal()">Kilder</button>
         <!-- Tabs Navigation -->
         <nav class="tabs-nav hidden" id="main-nav">
             <button onclick="switchTab('news2')" class="tab-btn active" data-target="news2" data-category="triage">NEWS2</button>
             <button onclick="switchTab('tews')" class="tab-btn" data-target="tews" data-category="triage">TEWS</button>
             <button onclick="switchTab('onews')" class="tab-btn" data-target="onews" data-category="triage" title="For gravide fra uke 20 og inntil 6 uker postpartum.">ONEWS</button>
-            <button onclick="switchTab('gcs')" class="tab-btn" data-target="gcs" data-category="triage other">GCS</button>
+            <button onclick="switchTab('gcs')" class="tab-btn" data-target="gcs" data-category="triage">GCS</button>
             <button onclick="switchTab('qsofa')" class="tab-btn" data-target="qsofa" data-category="other">qSOFA</button>
             <button onclick="switchTab('ciwa')" class="tab-btn" data-target="ciwa" data-category="other">CIWA-Ar</button>
             <button onclick="switchTab('chads')" class="tab-btn" data-target="chads" data-category="other">CHA₂DS₂-VASc</button>
             <button onclick="switchTab('wells-dvt')" class="tab-btn" data-target="wells-dvt" data-category="other">Wells DVT</button>
             <button onclick="switchTab('wells-le')" class="tab-btn" data-target="wells-le" data-category="other">Wells LE</button>
-            <button onclick="switchTab('curb65')" class="tab-btn" data-target="curb65" data-category="other">CURB-65</button>
+            <button onclick="switchTab('curb65')" class="tab-btn" data-target="curb65" data-category="other">CRB-65</button>
             <button onclick="switchTab('sirs')" class="tab-btn" data-target="sirs" data-category="other">SIRS</button>
             <button onclick="switchTab('nihss')" class="tab-btn" data-target="nihss" data-category="other">NIHSS</button>
             <button onclick="switchTab('abcd2')" class="tab-btn" data-target="abcd2" data-category="other">ABCD2</button>
             <button onclick="switchTab('mantrel')" class="tab-btn" data-target="mantrel" data-category="other">Mantrel</button>
+            <button onclick="switchTab('sepsis')" class="tab-btn" data-target="sepsis" data-category="triage">Sepsis</button>
         </nav>
 
         <!-- Content Wrap -->
@@ -149,7 +145,7 @@
                     <div class="input-card news2-card">
                         <label class="label">Temperatur</label>
                         <div class="input-wrapper">
-                            <input type="text" inputmode="decimal" id="n2_temp" oninput="formatInput(this, true)" onblur="validateInput(this, 35, 41)" class="form-input">
+                            <input type="text" inputmode="numeric" id="n2_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
                             <span class="input-unit">°C</span>
                         </div>
                     </div>
@@ -179,6 +175,78 @@
                 </div>
             </section>
 
+            <!-- Sepsis Section -->
+            <section id="sepsis" class="calc-section">
+                <div class="score-info">Ved mistenkt infeksjon vurderes NEWS2 sammen med qSOFA. H&oslash;y risiko ved NEWS2 &ge; 5, enkeltparameter p&aring; 3 poeng eller qSOFA &ge; 2.</div>
+                <div class="sepsis-layout">
+                    <div class="sepsis-panel">
+                        <h2 class="section-subtitle">NEWS2</h2>
+                        <div class="news2-layout sepsis-news2-layout">
+                            <div class="input-card news2-card">
+                                <label class="label">Resp. frekvens</label>
+                                <div class="input-wrapper">
+                                    <input type="text" inputmode="numeric" id="sx_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 70)" class="form-input">
+                                    <span class="input-unit">/min</span>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card">
+                                <label class="label">Puls</label>
+                                <div class="input-wrapper">
+                                    <input type="text" inputmode="numeric" id="sx_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 200)" class="form-input">
+                                    <span class="input-unit">/min</span>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card">
+                                <label class="label">Systolisk BT</label>
+                                <div class="input-wrapper">
+                                    <input type="text" inputmode="numeric" id="sx_bp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
+                                    <span class="input-unit">mmHg</span>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card">
+                                <label class="label">Tilf&oslash;rsel av oksygen</label>
+                                <div class="pill-radio pill-group-row news2-pill-row">
+                                    <input type="radio" name="sx_o2" id="sx_o2_0" value="0" data-text="Nei" class="hidden"><label for="sx_o2_0">Nei</label>
+                                    <input type="radio" name="sx_o2" id="sx_o2_2" value="2" data-text="Ja" class="hidden"><label for="sx_o2_2">Ja</label>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card">
+                                <label class="label">Temperatur</label>
+                                <div class="input-wrapper">
+                                    <input type="text" inputmode="numeric" id="sx_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
+                                    <span class="input-unit">&deg;C</span>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card">
+                                <label class="label">SpO2 (%)</label>
+                                <div class="input-wrapper">
+                                    <input type="text" inputmode="numeric" id="sx_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
+                                    <span class="input-unit">%</span>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card sepsis-wide">
+                                <label class="label">Bevissthet (ACVPU)</label>
+                                <div class="pill-radio pill-group">
+                                    <input type="radio" name="sx_avpu" id="sx_a_0" value="0" data-text="A (V&aring;ken)" class="hidden"><label for="sx_a_0">A (V&aring;ken / Normal)</label>
+                                    <input type="radio" name="sx_avpu" id="sx_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="sx_a_3">C/V/P/U (Forvirring, smerte, sl&oslash;v)</label>
+                                </div>
+                            </div>
+                            <div class="input-card news2-card">
+                                <label class="label">SpO2-skala</label>
+                                <select id="sx_scale" class="form-select" tabindex="-1" onchange="calculateScore()">
+                                    <option value="1" selected>Skala 1</option>
+                                    <option value="2">Skala 2</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sepsis-panel">
+                        <h2 class="section-subtitle">qSOFA</h2>
+                        <div id="sepsis-qsofa-form"></div>
+                    </div>
+                </div>
+            </section>
+
             <!-- TEWS Section -->
             <section id="tews" class="calc-section">
                 <div class="age-setup-box">
@@ -191,16 +259,9 @@
                         </select>
                     </div>
                     <span id="tews-active-group" class="text-blue-600"></span>
-                    <div class="tews-mobility-control">
-                        <label class="label">Mobilitet</label>
-                        <div class="pill-radio pill-group">
-                            <input type="radio" name="tews_mobility" id="t_mob_0" value="0" data-text="Normal for alder" class="hidden"><label for="t_mob_0">Normal for alder</label>
-                            <input type="radio" name="tews_mobility" id="t_mob_1" value="1" data-text="Ikke normal for alder" class="hidden"><label for="t_mob_1">Klarer ikke å bevege/gå som normalt</label>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="grid-3">
+                <div class="tews-top-grid">
                     <div class="input-card">
                         <label class="label">Resp. frekvens</label>
                         <div class="input-wrapper">
@@ -225,7 +286,7 @@
                     <div class="input-card">
                         <label class="label">Temperatur</label>
                         <div class="input-wrapper">
-                            <input type="text" inputmode="decimal" id="t_temp" oninput="formatInput(this, true)" onblur="validateInput(this, 30, 43)" class="form-input">
+                            <input type="text" inputmode="numeric" id="t_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 30, 43)" class="form-input">
                             <span class="input-unit">°C</span>
                         </div>
                     </div>
@@ -235,7 +296,6 @@
                             <input type="text" inputmode="numeric" id="t_kf" oninput="formatInput(this, false)" onblur="validateInput(this, 0, 10)" class="form-input">
                             <span class="input-unit">sek</span>
                         </div>
-                        <div class="tews-context-note">Brukes for barn under 13 år.</div>
                     </div>
                     <div class="input-card" id="tews-sbp-card">
                         <label class="label">Systolisk BT</label>
@@ -243,33 +303,40 @@
                             <input type="text" inputmode="numeric" id="t_sbp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
                             <span class="input-unit">mmHg</span>
                         </div>
-                        <div class="tews-context-note">Brukes for ungdom 13-15 år.</div>
                     </div>
                 </div>
 
-                <div class="grid-2">
-                    <div>
-                        <label class="label">Oksygentilførsel ved SaO2/SpO2-måling</label>
-                        <div class="pill-radio pill-group-row">
-                            <input type="radio" name="tews_o2" id="t_o2_0" value="0" data-text="Uten O2" class="hidden"><label for="t_o2_0">Uten O2</label>
-                            <input type="radio" name="tews_o2" id="t_o2_1" value="1" data-text="Med O2" class="hidden"><label for="t_o2_1">Med O2</label>
+                <div class="tews-choice-list">
+                    <div class="wells-row">
+                        <span class="wells-text">Skade</span>
+                        <div class="wells-btn-group wells-btn">
+                            <input type="radio" name="tews_injury" id="t_inj_1" value="1" data-text="Ja" class="hidden wells-ja"><label for="t_inj_1">Ja</label>
+                            <input type="radio" name="tews_injury" id="t_inj_0" value="0" data-text="Nei" class="hidden wells-nei"><label for="t_inj_0">Nei</label>
                         </div>
                     </div>
-                    <div>
-                        <label class="label">Bevissthet (AVPU)</label>
-                        <div class="pill-radio pill-group">
-                            <input type="radio" name="tews_avpu" id="t_a_0" value="0" data-text="Våken/normal" class="hidden"><label for="t_a_0">A: Våken / normal kontakt</label>
-                            <input type="radio" name="tews_avpu" id="t_a_1" value="1" data-text="Reagerer på tiltale" class="hidden"><label for="t_a_1">V: Slapp / reagerer på tiltale</label>
-                            <input type="radio" name="tews_avpu" id="t_a_2" value="2" data-text="Reagerer på smerte" class="hidden"><label for="t_a_2">P: Reagerer på smerte</label>
-                            <input type="radio" name="tews_avpu" id="t_a_3" value="3" data-text="Reagerer ikke" class="hidden"><label for="t_a_3">U: Reagerer ikke</label>
+                    <div class="wells-row">
+                        <span class="wells-text">Ekstra oksygentilførsel</span>
+                        <div class="wells-btn-group wells-btn">
+                            <input type="radio" name="tews_o2" id="t_o2_1" value="1" data-text="Med O2" class="hidden wells-ja"><label for="t_o2_1">Ja</label>
+                            <input type="radio" name="tews_o2" id="t_o2_0" value="0" data-text="Uten O2" class="hidden wells-nei"><label for="t_o2_0">Nei</label>
                         </div>
                     </div>
-                    <div>
-                        <label class="label">Skade</label>
-                        <div class="pill-radio pill-group-row">
-                            <input type="radio" name="tews_injury" id="t_inj_0" value="0" data-text="Nei" class="hidden"><label for="t_inj_0">Nei</label>
-                            <input type="radio" name="tews_injury" id="t_inj_1" value="1" data-text="Ja" class="hidden"><label for="t_inj_1">Ja</label>
+                    <div class="wells-row">
+                        <span class="wells-text">Normal mobilitet</span>
+                        <div class="wells-btn-group wells-btn">
+                            <input type="radio" name="tews_mobility" id="t_mob_0" value="0" data-text="Normal mobilitet" class="hidden wells-ja"><label for="t_mob_0">Ja</label>
+                            <input type="radio" name="tews_mobility" id="t_mob_1" value="1" data-text="Ikke normal mobilitet" class="hidden wells-nei"><label for="t_mob_1">Nei</label>
                         </div>
+                    </div>
+                </div>
+
+                <div class="input-card tews-avpu-card">
+                    <label class="label">Bevissthet (AVPU)</label>
+                    <div class="pill-radio tews-avpu-grid">
+                        <input type="radio" name="tews_avpu" id="t_a_0" value="0" data-text="Våken/normal" class="hidden"><label for="t_a_0">A: Våken / normal kontakt</label>
+                        <input type="radio" name="tews_avpu" id="t_a_1" value="1" data-text="Reagerer på tiltale" class="hidden"><label for="t_a_1">V: Slapp / reagerer på tiltale</label>
+                        <input type="radio" name="tews_avpu" id="t_a_2" value="2" data-text="Reagerer på smerte" class="hidden"><label for="t_a_2">P: Reagerer på smerte</label>
+                        <input type="radio" name="tews_avpu" id="t_a_3" value="3" data-text="Reagerer ikke" class="hidden"><label for="t_a_3">U: Reagerer ikke</label>
                     </div>
                 </div>
             </section>
@@ -323,7 +390,7 @@
                     <div class="input-card">
                         <label class="label">Temperatur</label>
                         <div class="input-wrapper">
-                            <input type="text" inputmode="decimal" id="o_temp" oninput="formatInput(this, true)" onblur="validateInput(this, 35, 41)" class="form-input">
+                            <input type="text" inputmode="numeric" id="o_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
                             <span class="input-unit">°C</span>
                         </div>
                     </div>
@@ -416,7 +483,7 @@
                 </div>
             </section>
 
-            <!-- CURB-65 Section -->
+            <!-- CRB-65 Section -->
             <section id="curb65" class="calc-section">
                <div class="score-info">Brukes ved pneumoni for å vurdere alvorlighetsgrad og behov for innleggelse eller tettere oppfølging.</div>
                 <div id="curb65-form"></div>
@@ -437,28 +504,41 @@
             <!-- ABCD2 Section -->
             <section id="abcd2" class="calc-section">
                <div class="score-info">Brukes etter TIA for å estimere tidlig risiko for hjerneslag.</div>
-                <div class="grid-3 abcd2-grid">
-                    <div class="input-card">
-                        <label class="label">Alder</label>
-                        <div class="pill-radio pill-group-row">
-                            <input type="radio" name="abcd_age" id="abcd_age_0" value="0" class="hidden"><label for="abcd_age_0">&lt; 60 år</label>
-                            <input type="radio" name="abcd_age" id="abcd_age_1" value="1" class="hidden"><label for="abcd_age_1">≥ 60 år</label>
-                        </div>
-                    </div>
-                    <div class="input-card">
+                <div class="abcd-top-panel">
+                    <div class="input-card abcd-bp-card" id="abcd-bp-card">
                         <label class="label">Blodtrykk</label>
-                        <div class="pill-radio pill-group-row">
-                            <input type="radio" name="abcd_bp" id="abcd_bp_0" value="0" class="hidden"><label for="abcd_bp_0">Under grense</label>
-                            <input type="radio" name="abcd_bp" id="abcd_bp_1" value="1" class="hidden"><label for="abcd_bp_1">≥ 140/90</label>
+                        <div class="abcd-bp-grid">
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="abcd_sbp" oninput="formatAbcdSbpInput(this)" onblur="validateInput(this, 50, 300)" class="form-input" aria-label="Systolisk blodtrykk" maxlength="3">
+                                <span class="input-unit">sys</span>
+                            </div>
+                            <span class="abcd-bp-separator">/</span>
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="abcd_dbp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 200)" class="form-input" aria-label="Diastolisk blodtrykk" maxlength="3">
+                                <span class="input-unit">dia</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-card">
-                        <label class="label">Diabetes</label>
-                        <div class="pill-radio pill-group-row">
-                            <input type="radio" name="abcd_diabetes" id="abcd_dm_0" value="0" class="hidden"><label for="abcd_dm_0">Nei</label>
-                            <input type="radio" name="abcd_diabetes" id="abcd_dm_1" value="1" class="hidden"><label for="abcd_dm_1">Ja</label>
+                    <div id="abcd-risk-form" class="abcd-risk-list">
+                        <div class="wells-row">
+                            <span class="wells-text">Alder over eller lik 60 år?</span>
+                            <div class="wells-btn-group wells-btn">
+                                <input type="radio" name="abcd_age" id="abcd_age_1" value="1" class="hidden wells-ja"><label for="abcd_age_1">Ja</label>
+                                <input type="radio" name="abcd_age" id="abcd_age_0" value="0" class="hidden wells-nei"><label for="abcd_age_0">Nei</label>
+                                <span class="point-display point-muted">-</span>
+                            </div>
+                        </div>
+                        <div class="wells-row">
+                            <span class="wells-text">Diabetes?</span>
+                            <div class="wells-btn-group wells-btn">
+                                <input type="radio" name="abcd_diabetes" id="abcd_dm_1" value="1" class="hidden wells-ja"><label for="abcd_dm_1">Ja</label>
+                                <input type="radio" name="abcd_diabetes" id="abcd_dm_0" value="0" class="hidden wells-nei"><label for="abcd_dm_0">Nei</label>
+                                <span class="point-display point-muted">-</span>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="grid-2 abcd2-grid abcd2-secondary-grid">
                     <div class="input-card">
                         <label class="label">Varighet</label>
                         <div class="pill-radio pill-group">
@@ -552,12 +632,13 @@
     <!-- Floating Footer for Score Result -->
     <footer class="score-footer hidden">
         <div class="footer-content">
-            <div class="score-display-wrap">
+            <div id="score-breakdown-trigger" class="score-display-wrap" tabindex="0" aria-describedby="score-breakdown-tooltip">
                 <div id="score-display" class="score-circle score-0">0</div>
                 <div class="score-text-wrap">
                     <p class="score-label">Total Score</p>
                     <p class="score-interpretation" id="score-interpretation">Fyll inn felter...</p>
                 </div>
+                <div id="score-breakdown-tooltip" class="score-breakdown-tooltip" role="tooltip"></div>
             </div>
 
                 <div class="footer-advanced-wrap">
@@ -610,6 +691,49 @@
         </div>
     </div>
 
+    <!-- Sources Modal -->
+    <div id="sources-modal" class="modal-backdrop">
+        <div class="modal-content sources-modal-content">
+            <div class="sources-modal-header">
+                <h3 class="modal-title">Kilder</h3>
+                <button class="icon-btn sources-close" type="button" onclick="hideSourcesModal()" aria-label="Lukk kilder">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="sources-table-wrap">
+                <table class="sources-table">
+                    <thead>
+                        <tr>
+                            <th>System</th>
+                            <th>Kilde</th>
+                            <th>Beskrivelse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>NEWS2</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt sykdom hos voksne</td></tr>
+                        <tr><td>Sepsis</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Mistenkt sepsis</td></tr>
+                        <tr><td>TEWS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt sykdom hos barn</td></tr>
+                        <tr><td>ONEWS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt sykdom hos gravide</td></tr>
+                        <tr><td>GCS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Bevissthetsnivå</td></tr>
+                        <tr><td>qSOFA</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Mistenkt sepsis</td></tr>
+                        <tr><td>CIWA-Ar</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Alkoholabstinens</td></tr>
+                        <tr><td>CHA₂DS₂-VASc</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Atrieflimmer</td></tr>
+                        <tr><td>Wells DVT</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Dyp venetrombose</td></tr>
+                        <tr><td>Wells LE</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Lungeemboli</td></tr>
+                        <tr><td>CRB-65</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Samfunnservervet pneumoni</td></tr>
+                        <tr><td>SIRS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Systemisk inflammasjon</td></tr>
+                        <tr><td>NIHSS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Hjerneslag</td></tr>
+                        <tr><td>ABCD2</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>TIA</td></tr>
+                        <tr><td>Mantrel</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt appendisitt</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-actions-centered">
+                <button class="modal-btn-ok" onclick="hideSourcesModal()">Lukk</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Custom Confirm Modal -->
     <div id="confirm-modal" class="modal-backdrop">
         <div class="modal-content">
@@ -625,5 +749,3 @@
     <script src="Score.js"></script>
 </body>
 </html>
-
-
