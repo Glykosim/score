@@ -81,10 +81,10 @@
         <section id="welcome-menu" class="welcome-menu">
             <div class="menu-grid">
                 <button class="menu-card" onclick="openCategory('triage')">
-                    <p>NEWS2, Sepsis, TEWS, ONEWS og GCS.</p>
+                    <p>NEWS2, TEWS, ONEWS og GCS.</p>
                 </button>
                 <button class="menu-card" onclick="openCategory('other')">
-                    <p>qSOFA, CIWA-Ar, CHA₂DS₂-VASc, Wells, CRB-65, SIRS, NIHSS, ABCD2 og Mantrel.</p>
+                    <p>qSOFA, CIWA-Ar, CHA₂DS₂-VASc, Wells, CRB-65, NIHSS, ABCD2 og Mantrel.</p>
                 </button>
             </div>
         </section>
@@ -101,11 +101,9 @@
             <button onclick="switchTab('wells-dvt')" class="tab-btn" data-target="wells-dvt" data-category="other">Wells DVT</button>
             <button onclick="switchTab('wells-le')" class="tab-btn" data-target="wells-le" data-category="other">Wells LE</button>
             <button onclick="switchTab('curb65')" class="tab-btn" data-target="curb65" data-category="other">CRB-65</button>
-            <button onclick="switchTab('sirs')" class="tab-btn" data-target="sirs" data-category="other">SIRS</button>
             <button onclick="switchTab('nihss')" class="tab-btn" data-target="nihss" data-category="other">NIHSS</button>
             <button onclick="switchTab('abcd2')" class="tab-btn" data-target="abcd2" data-category="other">ABCD2</button>
             <button onclick="switchTab('mantrel')" class="tab-btn" data-target="mantrel" data-category="other">Mantrel</button>
-            <button onclick="switchTab('sepsis')" class="tab-btn" data-target="sepsis" data-category="triage">Sepsis</button>
         </nav>
 
         <!-- Content Wrap -->
@@ -171,78 +169,6 @@
                             <option value="1" selected>Skala 1 (Standard)</option>
                             <option value="2">Skala 2 (KOLS/hyperkapnisk svikt)</option>
                         </select>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Sepsis Section -->
-            <section id="sepsis" class="calc-section">
-                <div class="score-info">Ved mistenkt infeksjon vurderes NEWS2 sammen med qSOFA. H&oslash;y risiko ved NEWS2 &ge; 5, enkeltparameter p&aring; 3 poeng eller qSOFA &ge; 2.</div>
-                <div class="sepsis-layout">
-                    <div class="sepsis-panel">
-                        <h2 class="section-subtitle">NEWS2</h2>
-                        <div class="news2-layout sepsis-news2-layout">
-                            <div class="input-card news2-card">
-                                <label class="label">Resp. frekvens</label>
-                                <div class="input-wrapper">
-                                    <input type="text" inputmode="numeric" id="sx_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 70)" class="form-input">
-                                    <span class="input-unit">/min</span>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card">
-                                <label class="label">Puls</label>
-                                <div class="input-wrapper">
-                                    <input type="text" inputmode="numeric" id="sx_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 200)" class="form-input">
-                                    <span class="input-unit">/min</span>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card">
-                                <label class="label">Systolisk BT</label>
-                                <div class="input-wrapper">
-                                    <input type="text" inputmode="numeric" id="sx_bp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
-                                    <span class="input-unit">mmHg</span>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card">
-                                <label class="label">Tilf&oslash;rsel av oksygen</label>
-                                <div class="pill-radio pill-group-row news2-pill-row">
-                                    <input type="radio" name="sx_o2" id="sx_o2_0" value="0" data-text="Nei" class="hidden"><label for="sx_o2_0">Nei</label>
-                                    <input type="radio" name="sx_o2" id="sx_o2_2" value="2" data-text="Ja" class="hidden"><label for="sx_o2_2">Ja</label>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card">
-                                <label class="label">Temperatur</label>
-                                <div class="input-wrapper">
-                                    <input type="text" inputmode="numeric" id="sx_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
-                                    <span class="input-unit">&deg;C</span>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card">
-                                <label class="label">SpO2 (%)</label>
-                                <div class="input-wrapper">
-                                    <input type="text" inputmode="numeric" id="sx_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
-                                    <span class="input-unit">%</span>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card sepsis-wide">
-                                <label class="label">Bevissthet (ACVPU)</label>
-                                <div class="pill-radio pill-group">
-                                    <input type="radio" name="sx_avpu" id="sx_a_0" value="0" data-text="A (V&aring;ken)" class="hidden"><label for="sx_a_0">A (V&aring;ken / Normal)</label>
-                                    <input type="radio" name="sx_avpu" id="sx_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="sx_a_3">C/V/P/U (Forvirring, smerte, sl&oslash;v)</label>
-                                </div>
-                            </div>
-                            <div class="input-card news2-card">
-                                <label class="label">SpO2-skala</label>
-                                <select id="sx_scale" class="form-select" tabindex="-1" onchange="calculateScore()">
-                                    <option value="1" selected>Skala 1</option>
-                                    <option value="2">Skala 2</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="sepsis-panel">
-                        <h2 class="section-subtitle">qSOFA</h2>
-                        <div id="sepsis-qsofa-form"></div>
                     </div>
                 </div>
             </section>
@@ -346,6 +272,69 @@
                <div class="score-info">Brukes ved mistenkt infeksjon for å identifisere pasienter med økt risiko for sepsisrelatert dårlig utfall.</div>
                 <div id="qsofa-form">
                     <!-- Genereres av JS -->
+                </div>
+                <div id="qsofa-news2-panel" class="qsofa-news2-panel hidden">
+                    <div class="score-info qsofa-news2-info">qSOFA &ge; 2: vurder NEWS2 videre for samlet risikovurdering ved mistenkt sepsis.</div>
+                    <h2 class="section-subtitle">NEWS2</h2>
+                    <div class="news2-layout qsofa-news2-layout">
+                        <div class="input-card news2-card">
+                            <label class="label">Resp. frekvens</label>
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="qsn_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 70)" class="form-input">
+                                <span class="input-unit">/min</span>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card">
+                            <label class="label">Puls</label>
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="qsn_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 200)" class="form-input">
+                                <span class="input-unit">/min</span>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card">
+                            <label class="label">Systolisk BT</label>
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="qsn_bp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
+                                <span class="input-unit">mmHg</span>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card">
+                            <label class="label">Oksygentilførsel</label>
+                            <div class="pill-radio pill-group-row news2-pill-row">
+                                <input type="radio" name="qsn_o2" id="qsn_o2_0" value="0" data-text="Nei" class="hidden"><label for="qsn_o2_0">Nei</label>
+                                <input type="radio" name="qsn_o2" id="qsn_o2_2" value="2" data-text="Ja" class="hidden"><label for="qsn_o2_2">Ja</label>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card">
+                            <label class="label">Temperatur</label>
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="qsn_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
+                                <span class="input-unit">&deg;C</span>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card">
+                            <label class="label">SpO2 (%)</label>
+                            <div class="input-wrapper">
+                                <input type="text" inputmode="numeric" id="qsn_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
+                                <span class="input-unit">%</span>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card qsofa-news2-wide">
+                            <label class="label">Bevissthet (ACVPU)</label>
+                            <div class="pill-radio pill-group">
+                                <input type="radio" name="qsn_avpu" id="qsn_a_0" value="0" data-text="A (Våken)" class="hidden"><label for="qsn_a_0">A (Våken / Normal)</label>
+                                <input type="radio" name="qsn_avpu" id="qsn_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="qsn_a_3">C/V/P/U (Forvirring, smerte, sløv)</label>
+                            </div>
+                        </div>
+                        <div class="input-card news2-card">
+                            <label class="label">SpO2-skala</label>
+                            <select id="qsn_scale" class="form-select" tabindex="-1" onchange="calculateScore()">
+                                <option value="1" selected>Skala 1</option>
+                                <option value="2">Skala 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="qsofa-news2-advice" class="qsofa-news2-advice" aria-live="polite"></div>
                 </div>
             </section>
 
@@ -487,12 +476,6 @@
             <section id="curb65" class="calc-section">
                <div class="score-info">Brukes ved pneumoni for å vurdere alvorlighetsgrad og behov for innleggelse eller tettere oppfølging.</div>
                 <div id="curb65-form"></div>
-            </section>
-
-            <!-- SIRS Section -->
-            <section id="sirs" class="calc-section">
-               <div class="score-info">Brukes til å identifisere systemisk inflammasjonsrespons. Må tolkes i klinisk sammenheng.</div>
-                <div id="sirs-form"></div>
             </section>
 
             <!-- NIHSS Section -->
@@ -710,21 +693,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>NEWS2</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt sykdom hos voksne</td></tr>
-                        <tr><td>Sepsis</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Mistenkt sepsis</td></tr>
-                        <tr><td>TEWS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt sykdom hos barn</td></tr>
-                        <tr><td>ONEWS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt sykdom hos gravide</td></tr>
-                        <tr><td>GCS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Bevissthetsnivå</td></tr>
-                        <tr><td>qSOFA</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Mistenkt sepsis</td></tr>
-                        <tr><td>CIWA-Ar</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Alkoholabstinens</td></tr>
-                        <tr><td>CHA₂DS₂-VASc</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Atrieflimmer</td></tr>
-                        <tr><td>Wells DVT</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Dyp venetrombose</td></tr>
-                        <tr><td>Wells LE</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Lungeemboli</td></tr>
-                        <tr><td>CRB-65</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Samfunnservervet pneumoni</td></tr>
-                        <tr><td>SIRS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Systemisk inflammasjon</td></tr>
-                        <tr><td>NIHSS</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Hjerneslag</td></tr>
-                        <tr><td>ABCD2</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>TIA</td></tr>
-                        <tr><td>Mantrel</td><td><a href="#" target="_blank" rel="noopener">Legg inn kilde</a></td><td>Akutt appendisitt</td></tr>
+                        <tr><td>NEWS2</td><td><a href="docs/NEWS2.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt sykdom hos voksne</td></tr>
+                        <tr><td>TEWS</td><td><a href="docs/TEWS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt sykdom hos barn</td></tr>
+                        <tr><td>ONEWS</td><td><a href="docs/ONEWS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt sykdom hos gravide</td></tr>
+                        <tr><td>GCS</td><td><a href="docs/GCS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Bevissthetsnivå</td></tr>
+                        <tr><td>qSOFA</td><td><a href="docs/qSOFA.pdf" target="_blank" rel="noopener">PDF</a></td><td>Mistenkt sepsis</td></tr>
+                        <tr><td>CIWA-Ar</td><td><a href="docs/CIWA_AR.pdf" target="_blank" rel="noopener">PDF</a></td><td>Alkoholabstinens</td></tr>
+                        <tr><td>CHA₂DS₂-VASc</td><td><a href="docs/CHA%E2%82%82DS%E2%82%82-VASc.pdf" target="_blank" rel="noopener">PDF</a></td><td>Atrieflimmer</td></tr>
+                        <tr><td>Wells DVT</td><td><a href="docs/Wells%20DVT.pdf" target="_blank" rel="noopener">PDF</a></td><td>Dyp venetrombose</td></tr>
+                        <tr><td>Wells LE</td><td><a href="docs/Wells%20LE.pdf" target="_blank" rel="noopener">PDF</a></td><td>Lungeemboli</td></tr>
+                        <tr><td>CRB-65</td><td><a href="docs/CRB65.pdf" target="_blank" rel="noopener">PDF</a></td><td>Samfunnservervet pneumoni</td></tr>
+                        <tr><td>NIHSS</td><td><a href="docs/NIHSS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Hjerneslag</td></tr>
+                        <tr><td>ABCD2</td><td><a href="docs/ABCD2.pdf" target="_blank" rel="noopener">PDF</a></td><td>TIA</td></tr>
+                        <tr><td>Mantrel</td><td><a href="docs/MANTREL.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt appendisitt</td></tr>
                     </tbody>
                 </table>
             </div>

@@ -375,13 +375,6 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
             { text: "Alder ≥ 65 år", val: 1 }
         ];
 
-        var sirsData = [
-            { text: "Temperatur > 38,0 °C eller < 36,0 °C", val: 1 },
-            { text: "Puls > 90 /min", val: 1 },
-            { text: "Respirasjonsfrekvens > 20 /min eller PaCO2 < 4,3 kPa", val: 1 },
-            { text: "Leukocytter > 12 eller < 4 x10⁹/L, eller >10 % umodne nøytrofile", val: 1 }
-        ];
-
         var abcd2Data = [
             { text: "Alder ≥ 60 år", val: 1 },
             { text: "BT ≥ 140 systolisk eller ≥ 90 diastolisk", val: 1 },
@@ -701,46 +694,8 @@ function updateHeaderByCategory(cat){
             var target = preferredTab && visibleTargets.indexOf(preferredTab) !== -1 ? preferredTab : visibleTargets[0];
             switchTab(target);
         }
-
-        function copyTextValueIfPresent(fromId, toId) {
-            var from = document.getElementById(fromId);
-            var to = document.getElementById(toId);
-            if (from && to && from.value !== '') to.value = from.value;
-        }
-
-        function copyRadioValueIfPresent(fromName, toName) {
-            var from = getCheckedRadio(fromName);
-            if (!from) return;
-            var to = document.querySelector('input[name="' + toName + '"][value="' + from.value + '"]');
-            if (to) to.checked = true;
-        }
-
-        function setSepsisQsofaFromNews2(name, isYes) {
-            var target = document.querySelector('input[name="' + name + '"][value="' + (isYes ? '1' : '0') + '"]');
-            if (target) target.checked = true;
-        }
-
-        function syncNews2ToSepsis() {
-            copyTextValueIfPresent('n2_resp', 'sx_resp');
-            copyTextValueIfPresent('n2_spo2', 'sx_spo2');
-            copyTextValueIfPresent('n2_bp', 'sx_bp');
-            copyTextValueIfPresent('n2_puls', 'sx_puls');
-            copyTextValueIfPresent('n2_temp', 'sx_temp');
-            copyRadioValueIfPresent('n2_o2', 'sx_o2');
-            copyRadioValueIfPresent('n2_avpu', 'sx_avpu');
-            var newsScale = document.getElementById('news2-scale');
-            var sepsisScale = document.getElementById('sx_scale');
-            if (newsScale && sepsisScale) sepsisScale.value = newsScale.value;
-
-            var resp = getNum('n2_resp');
-            var bp = getNum('n2_bp');
-            var avpu = getCheckedRadio('n2_avpu');
-            if (!isNaN(resp)) setSepsisQsofaFromNews2('sepsis_qsofa_0', resp >= 22);
-            if (avpu) setSepsisQsofaFromNews2('sepsis_qsofa_1', avpu.value === '3');
-            if (!isNaN(bp)) setSepsisQsofaFromNews2('sepsis_qsofa_2', bp <= 100);
-        }
-
         function switchTab(tabId) {
+            if (!document.getElementById(tabId)) tabId = 'news2';
             var sections = document.querySelectorAll('.calc-section');
             for(var i=0; i<sections.length; i++) {
                 sections[i].classList.remove('active');
@@ -756,7 +711,6 @@ function updateHeaderByCategory(cat){
             if (activeBtn) activeBtn.classList.add('active');
             
             currentTab = tabId;
-            if (tabId === 'sepsis') syncNews2ToSepsis();
             localStorage.setItem('scoretool-tab', tabId);
             syncChoiceTabState();
             calculateScore();
@@ -889,10 +843,8 @@ function resetForm(silent) {
             document.getElementById('wells-le-form').innerHTML = buildChecklistHTML(wellsLEData, 'le');
             if (document.getElementById('mantrel-form')) document.getElementById('mantrel-form').innerHTML = buildChecklistHTML(mantrelData, 'mantrel');
             document.getElementById('qsofa-form').innerHTML = buildChecklistHTML(qSofaData, 'qsofa');
-            document.getElementById('sepsis-qsofa-form').innerHTML = buildChecklistHTML(qSofaData, 'sepsis_qsofa');
             document.getElementById('chads-form').innerHTML = buildChecklistHTML(chadsData, 'chads');
             document.getElementById('curb65-form').innerHTML = buildChecklistHTML(curb65Data, 'curb65');
-            document.getElementById('sirs-form').innerHTML = buildChecklistHTML(sirsData, 'sirs');
             document.getElementById('mantrel-form').innerHTML = buildChecklistHTML(mantrelData, 'mantrel');
         }
 
@@ -1249,13 +1201,33 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                 var calcQ = calcChecklistScore('qsofa-form');
                 if (calcQ.checkedCount === calcQ.totalRows && calcQ.totalRows > 0) {
                     score = calcQ.score;
-                    if (score < 2) { interpretation = "Lav risiko for sepsis-relatert dårlig utfall"; colorClass = "score-0"; }
-                    else { interpretation = "Høy risiko (Mistenkt sepsis)"; colorClass = "score-high"; }
+                    if (score < 2) {
+                        setQsofaNews2PanelVisible(false);
+                        interpretation = "Lav risiko for sepsis-relatert dårlig utfall";
+                        colorClass = "score-0";
+                    } else {
+                        setQsofaNews2PanelVisible(true);
+                        var qNews = getQsofaNews2State();
+                        if (qNews.complete) {
+                            score = calcQ.score + "/" + qNews.score;
+                            var qTriage = setTriageInterpretation(qNews.score, qNews.hasRed);
+                            interpretation = "qSOFA ≥ 2. NEWS2: " + qTriage.text;
+                            colorClass = qNews.score >= 5 || qNews.hasRed ? "score-high" : qTriage.cls;
+                            if (qNews.score >= 5 || qNews.hasRed) setQsofaNews2Advice("Høy risiko ved mistenkt sepsis. Vurder rask legetilsyn og videre sepsishåndtering.", "bad");
+                            else setQsofaNews2Advice("qSOFA er positiv. NEWS2 er lavere, men klinisk mistanke om sepsis skal fortsatt vurderes og målinger bør gjentas ved forverring.", "warn");
+                        } else {
+                            score = "-";
+                            interpretation = "qSOFA ≥ 2. Fyll inn NEWS2 for videre risikovurdering.";
+                            colorClass = "score-high";
+                            setQsofaNews2Advice(buildMissingText(qNews.missing, 7), "warn");
+                        }
+                    }
                 } else {
                     score = "-";
                     var missingQ = calcQ.totalRows - calcQ.checkedCount;
                     interpretation = missingQ === calcQ.totalRows ? "Fyll inn felter..." : "Mangler svar på " + missingQ + " punkt(er)";
                     colorClass = "score-0";
+                    setQsofaNews2PanelVisible(false);
                 }
 
             } else if (currentTab === 'chads') {
@@ -1800,10 +1772,64 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
         function updateCopyButtonState(score) {
             var btn = document.getElementById('copy-btn');
             if (!btn) return;
-            currentScoreComplete = score !== "-" && score !== null && typeof score !== 'undefined' && (currentTab === 'sepsis' || !isNaN(score));
+            currentScoreComplete = score !== "-" && score !== null && typeof score !== 'undefined' && (currentTab === 'qsofa' || !isNaN(score));
             btn.disabled = !currentScoreComplete;
             btn.setAttribute('aria-disabled', currentScoreComplete ? 'false' : 'true');
             btn.classList.toggle('copy-btn-ready', currentScoreComplete);
+        }
+
+        function setQsofaNews2PanelVisible(show) {
+            var panel = document.getElementById('qsofa-news2-panel');
+            if (panel) panel.classList.toggle('hidden', !show);
+            var advice = document.getElementById('qsofa-news2-advice');
+            if (advice && !show) advice.textContent = '';
+            if (!show) {
+                var ids = ['qsn_resp', 'qsn_spo2', 'qsn_bp', 'qsn_puls', 'qsn_temp'];
+                for (var i = 0; i < ids.length; i++) updateInputColor(ids[i], null, true);
+            }
+        }
+
+        function getQsofaNews2State() {
+            var resp = getNum('qsn_resp');
+            var spo2 = getNum('qsn_spo2');
+            var bp = getNum('qsn_bp');
+            var puls = getNum('qsn_puls');
+            var temp = getNum('qsn_temp');
+            var scaleEl = document.getElementById('qsn_scale');
+            var scale = scaleEl ? scaleEl.value : '1';
+            var o2Radio = getCheckedRadio('qsn_o2');
+            var avpuRadio = getCheckedRadio('qsn_avpu');
+            var o2 = o2Radio ? parseInt(o2Radio.value, 10) : null;
+            var avpu = avpuRadio ? parseInt(avpuRadio.value, 10) : null;
+            var respS = calcNEWS2Resp(resp);
+            var spo2S = calcNEWS2SpO2(spo2, scale, o2 || 0);
+            var bpS = calcNEWS2BP(bp);
+            var pulsS = calcNEWS2Pulse(puls);
+            var tempS = calcNEWS2Temp(temp);
+            updateInputColor('qsn_resp', respS, isNaN(resp));
+            updateInputColor('qsn_spo2', spo2S, isNaN(spo2));
+            updateInputColor('qsn_bp', bpS, isNaN(bp));
+            updateInputColor('qsn_puls', pulsS, isNaN(puls));
+            updateInputColor('qsn_temp', tempS, isNaN(temp));
+            var missing = 0;
+            if (isNaN(resp)) missing++;
+            if (isNaN(spo2)) missing++;
+            if (isNaN(bp)) missing++;
+            if (isNaN(puls)) missing++;
+            if (isNaN(temp)) missing++;
+            if (!o2Radio) missing++;
+            if (!avpuRadio) missing++;
+            var complete = missing === 0;
+            var newsScore = complete ? respS + spo2S + bpS + pulsS + tempS + o2 + avpu : null;
+            var hasRed = complete && (respS === 3 || spo2S === 3 || bpS === 3 || pulsS === 3 || tempS === 3 || avpu === 3);
+            return { complete: complete, missing: missing, score: newsScore, hasRed: hasRed };
+        }
+
+        function setQsofaNews2Advice(text, tone) {
+            var advice = document.getElementById('qsofa-news2-advice');
+            if (!advice) return;
+            advice.className = 'qsofa-news2-advice ' + (tone || '');
+            advice.textContent = text || '';
         }
 
         function calculateScore() {
@@ -1848,53 +1874,6 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                     if (!o2Radio) missingNews2++;
                     if (!avpuRadio) missingNews2++;
                     interpretation = buildMissingText(missingNews2, 7);
-                }
-            } else if (currentTab === 'sepsis') {
-                var sxResp = getNum('sx_resp');
-                var sxSpo2 = getNum('sx_spo2');
-                var sxBp = getNum('sx_bp');
-                var sxPuls = getNum('sx_puls');
-                var sxTemp = getNum('sx_temp');
-                var sxScale = document.getElementById('sx_scale').value;
-                var sxO2Radio = getCheckedRadio('sx_o2');
-                var sxAvpuRadio = getCheckedRadio('sx_avpu');
-                var sxO2 = sxO2Radio ? parseInt(sxO2Radio.value, 10) : null;
-                var sxAvpu = sxAvpuRadio ? parseInt(sxAvpuRadio.value, 10) : null;
-                var sxRespS = calcNEWS2Resp(sxResp);
-                var sxSpo2S = calcNEWS2SpO2(sxSpo2, sxScale, sxO2 || 0);
-                var sxBpS = calcNEWS2BP(sxBp);
-                var sxPulsS = calcNEWS2Pulse(sxPuls);
-                var sxTempS = calcNEWS2Temp(sxTemp);
-                updateInputColor('sx_resp', sxRespS, isNaN(sxResp));
-                updateInputColor('sx_spo2', sxSpo2S, isNaN(sxSpo2));
-                updateInputColor('sx_bp', sxBpS, isNaN(sxBp));
-                updateInputColor('sx_puls', sxPulsS, isNaN(sxPuls));
-                updateInputColor('sx_temp', sxTempS, isNaN(sxTemp));
-                var sxNewsComplete = allPresent([sxResp, sxSpo2, sxBp, sxPuls, sxTemp]) && sxO2Radio && sxAvpuRadio;
-                var sxQsofa = calcChecklistScore('sepsis-qsofa-form');
-                var sxComplete = sxNewsComplete && sxQsofa.checkedCount === sxQsofa.totalRows && sxQsofa.totalRows > 0;
-                if (sxComplete) {
-                    var sxNewsScore = sxRespS + sxSpo2S + sxBpS + sxPulsS + sxTempS + sxO2 + sxAvpu;
-                    var sxHasRed = sxRespS === 3 || sxSpo2S === 3 || sxBpS === 3 || sxPulsS === 3 || sxTempS === 3 || sxAvpu === 3;
-                    score = sxNewsScore + '/' + sxQsofa.score;
-                    if (sxNewsScore >= 5 || sxHasRed || sxQsofa.score >= 2) {
-                        interpretation = "Høy risiko ved mistenkt sepsis";
-                        colorClass = "score-high";
-                    } else {
-                        interpretation = "Lavere risiko, vurder klinisk";
-                        colorClass = "score-0";
-                    }
-                } else {
-                    var missingSepsis = 0;
-                    if (isNaN(sxResp)) missingSepsis++;
-                    if (isNaN(sxSpo2)) missingSepsis++;
-                    if (isNaN(sxBp)) missingSepsis++;
-                    if (isNaN(sxPuls)) missingSepsis++;
-                    if (isNaN(sxTemp)) missingSepsis++;
-                    if (!sxO2Radio) missingSepsis++;
-                    if (!sxAvpuRadio) missingSepsis++;
-                    missingSepsis += sxQsofa.totalRows - sxQsofa.checkedCount;
-                    interpretation = buildMissingText(missingSepsis, 10);
                 }
             } else if (currentTab === 'onews') {
                 var oResp = getNum('o_resp');
@@ -2001,10 +1980,30 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                 var calcQ = calcChecklistScore('qsofa-form');
                 if (calcQ.checkedCount === calcQ.totalRows && calcQ.totalRows > 0) {
                     score = calcQ.score;
-                    interpretation = score < 2 ? "Lav risiko for sepsis-relatert dårlig utfall" : "Høy risiko (mistenkt sepsis)";
-                    colorClass = score < 2 ? "score-0" : "score-high";
+                    if (score < 2) {
+                        setQsofaNews2PanelVisible(false);
+                        interpretation = "Lav risiko for sepsis-relatert dårlig utfall";
+                        colorClass = "score-0";
+                    } else {
+                        setQsofaNews2PanelVisible(true);
+                        var qNews2 = getQsofaNews2State();
+                        if (qNews2.complete) {
+                            score = calcQ.score + "/" + qNews2.score;
+                            var qTriage2 = setTriageInterpretation(qNews2.score, qNews2.hasRed);
+                            interpretation = "qSOFA ≥ 2. NEWS2: " + qTriage2.text;
+                            colorClass = qNews2.score >= 5 || qNews2.hasRed ? "score-high" : qTriage2.cls;
+                            if (qNews2.score >= 5 || qNews2.hasRed) setQsofaNews2Advice("Høy risiko ved mistenkt sepsis. Vurder rask legetilsyn og videre sepsishåndtering.", "bad");
+                            else setQsofaNews2Advice("qSOFA er positiv. NEWS2 er lavere, men klinisk mistanke om sepsis skal fortsatt vurderes og målinger bør gjentas ved forverring.", "warn");
+                        } else {
+                            score = "-";
+                            interpretation = "qSOFA ≥ 2. Fyll inn NEWS2 for videre risikovurdering.";
+                            colorClass = "score-high";
+                            setQsofaNews2Advice(buildMissingText(qNews2.missing, 7), "warn");
+                        }
+                    }
                 } else {
                     interpretation = buildMissingText(calcQ.totalRows - calcQ.checkedCount, calcQ.totalRows);
+                    setQsofaNews2PanelVisible(false);
                 }
             } else if (currentTab === 'chads') {
                 var calcChads = calcChecklistScore('chads-form');
@@ -2078,15 +2077,6 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                     else { interpretation = "Høy risiko"; colorClass = "score-high"; }
                 } else {
                     interpretation = buildMissingText(calcCurb.totalRows - calcCurb.checkedCount, calcCurb.totalRows);
-                }
-            } else if (currentTab === 'sirs') {
-                var calcSirs = calcChecklistScore('sirs-form');
-                if (calcSirs.checkedCount === calcSirs.totalRows && calcSirs.totalRows > 0) {
-                    score = calcSirs.score;
-                    interpretation = score >= 2 ? "Oppfyller SIRS-kriterier (≥ 2)" : "Oppfyller ikke SIRS-kriterier";
-                    colorClass = score >= 2 ? "score-high" : "score-0";
-                } else {
-                    interpretation = buildMissingText(calcSirs.totalRows - calcSirs.checkedCount, calcSirs.totalRows);
                 }
             } else if (currentTab === 'nihss') {
                 var calcNihss = sumSelectValues('#nihss .ciwa-select');
@@ -2264,22 +2254,23 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             lines.push(formatBreakdownLine('Bevissthet (ACVPU)', getCheckedLabelText(avpuRadio), avpuRadio.value));
             return lines;
         }
-
-        function getSepsisBreakdownLines() {
-            var scale = document.getElementById('sx_scale').value;
-            var o2Radio = getCheckedRadio('sx_o2');
+        function getQsofaBreakdownLines() {
+            var lines = getChecklistBreakdownLines('qsofa-form');
+            var panel = document.getElementById('qsofa-news2-panel');
+            if (!panel || panel.classList.contains('hidden')) return lines;
+            var scale = document.getElementById('qsn_scale').value;
+            var o2Radio = getCheckedRadio('qsn_o2');
             var o2 = o2Radio ? parseInt(o2Radio.value, 10) : 0;
-            var avpuRadio = getCheckedRadio('sx_avpu');
-            var lines = [
-                formatBreakdownLine('NEWS2 resp. frekvens', getTextValueWithUnit('sx_resp'), calcNEWS2Resp(getNum('sx_resp'))),
-                formatBreakdownLine('NEWS2 SpO2', getTextValueWithUnit('sx_spo2'), calcNEWS2SpO2(getNum('sx_spo2'), scale, o2)),
-                formatBreakdownLine('NEWS2 systolisk BT', getTextValueWithUnit('sx_bp'), calcNEWS2BP(getNum('sx_bp'))),
-                formatBreakdownLine('NEWS2 puls', getTextValueWithUnit('sx_puls'), calcNEWS2Pulse(getNum('sx_puls'))),
-                formatBreakdownLine('NEWS2 temperatur', getTextValueWithUnit('sx_temp'), calcNEWS2Temp(getNum('sx_temp'))),
+            var avpuRadio = getCheckedRadio('qsn_avpu');
+            return lines.concat([
+                formatBreakdownLine('NEWS2 resp. frekvens', getTextValueWithUnit('qsn_resp'), calcNEWS2Resp(getNum('qsn_resp'))),
+                formatBreakdownLine('NEWS2 SpO2', getTextValueWithUnit('qsn_spo2'), calcNEWS2SpO2(getNum('qsn_spo2'), scale, o2)),
+                formatBreakdownLine('NEWS2 systolisk BT', getTextValueWithUnit('qsn_bp'), calcNEWS2BP(getNum('qsn_bp'))),
+                formatBreakdownLine('NEWS2 puls', getTextValueWithUnit('qsn_puls'), calcNEWS2Pulse(getNum('qsn_puls'))),
+                formatBreakdownLine('NEWS2 temperatur', getTextValueWithUnit('qsn_temp'), calcNEWS2Temp(getNum('qsn_temp'))),
                 formatBreakdownLine('NEWS2 oksygen', getCheckedLabelText(o2Radio), o2Radio.value),
                 formatBreakdownLine('NEWS2 bevissthet', getCheckedLabelText(avpuRadio), avpuRadio.value)
-            ];
-            return lines.concat(getChecklistBreakdownLines('sepsis-qsofa-form'));
+            ]);
         }
 
         function getOnewsBreakdownLines() {
@@ -2324,7 +2315,6 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
         function buildScoreBreakdownForCurrentTab() {
             var lines = [];
             if (currentTab === 'news2') lines = getNews2BreakdownLines();
-            else if (currentTab === 'sepsis') lines = getSepsisBreakdownLines();
             else if (currentTab === 'tews') lines = getTewsBreakdownLines();
             else if (currentTab === 'onews') lines = getOnewsBreakdownLines();
             else if (currentTab === 'ciwa') lines = getSelectBreakdownLines('#ciwa .ciwa-select');
@@ -2339,14 +2329,13 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                 getCheckedRadioBreakdown('chads_sex', 'Kjønn'),
                 getCheckedRadioBreakdown('chads_age', 'Alder')
             ].filter(Boolean).concat(getChecklistBreakdownLines('chads-form'));
-            else if (currentTab === 'qsofa') lines = getChecklistBreakdownLines('qsofa-form');
+            else if (currentTab === 'qsofa') lines = getQsofaBreakdownLines();
             else if (currentTab === 'wells-dvt') lines = getChecklistBreakdownLines('wells-dvt-form');
             else if (currentTab === 'wells-le') lines = getChecklistBreakdownLines('wells-le-form');
             else if (currentTab === 'curb65') lines = getChecklistBreakdownLines('curb65-form');
-            else if (currentTab === 'sirs') lines = getChecklistBreakdownLines('sirs-form');
             else if (currentTab === 'mantrel') lines = getChecklistBreakdownLines('mantrel-form');
             var score = document.getElementById('score-display').textContent.trim();
-            var totalLine = currentTab === 'sepsis' ? 'NEWS2/qSOFA = ' + score : 'Totalt = ' + score + ' poeng';
+            var totalLine = currentTab === 'qsofa' && score.indexOf('/') !== -1 ? 'qSOFA/NEWS2 = ' + score : 'Totalt = ' + score + ' poeng';
             return ['Poengberegning'].concat(lines, [totalLine]).join('\n');
         }
 

@@ -280,23 +280,60 @@
             font-size: 1rem;
             font-weight: 800;
         }
-        .sepsis-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 2fr) minmax(22rem, 1fr);
-            gap: 1rem;
-            align-items: start;
-        }
-        .sepsis-panel {
+        .qsofa-news2-panel {
             background: var(--bg-surface);
             border: 1px solid var(--border-soft);
             border-radius: 0.5rem;
-            padding: 1rem;
+            padding: 0.85rem;
+            margin-top: 1rem;
         }
-        .sepsis-news2-layout {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+        .qsofa-news2-info {
+            margin-bottom: 0.75rem;
+            padding: 0.6rem 0.75rem;
         }
-        .sepsis-wide {
-            grid-column: span 2;
+        .qsofa-news2-layout {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .qsofa-news2-layout .news2-card {
+            padding: 0.6rem;
+        }
+        .qsofa-news2-layout .label {
+            font-size: 0.78rem;
+        }
+        .qsofa-news2-layout .form-input,
+        .qsofa-news2-layout .form-select {
+            min-height: 2.45rem;
+        }
+        .qsofa-news2-layout .pill-radio label {
+            padding: 0.38rem 0.65rem;
+            min-height: 2.45rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qsofa-news2-wide {
+            grid-column: span 3;
+        }
+        .qsofa-news2-advice {
+            margin-top: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-soft);
+            padding: 0.7rem 0.85rem;
+            color: var(--text-main);
+            background: #f8fafc;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .qsofa-news2-advice.warn {
+            background: #fffbeb;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+        .qsofa-news2-advice.bad {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #991b1b;
         }
         .tews-top-grid {
             display: grid;
@@ -327,11 +364,11 @@
             .tews-top-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            .sepsis-layout {
-                grid-template-columns: 1fr;
-            }
-            .sepsis-news2-layout {
+            .qsofa-news2-layout {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .qsofa-news2-wide {
+                grid-column: span 2;
             }
             .news2-wide {
                 grid-column: span 2;
@@ -344,12 +381,12 @@
             .news2-wide {
                 grid-column: span 1;
             }
-            .sepsis-wide {
+            .qsofa-news2-wide {
                 grid-column: span 1;
             }
             .tews-top-grid,
             .tews-avpu-grid,
-            .sepsis-news2-layout,
+            .qsofa-news2-layout,
             .abcd-risk-list,
             .abcd-top-panel {
                 grid-template-columns: 1fr;
@@ -558,21 +595,17 @@
         .wells-ja:checked + label { background-color: #22c55e; color: white; border-color: #22c55e; }
         .wells-nei:checked + label { background-color: #ef4444; color: white; border-color: #ef4444; }
         #qsofa .wells-ja:checked + label,
-        #sepsis .wells-ja:checked + label,
         #abcd2 .wells-ja:checked + label,
         #chads .wells-ja:checked + label,
         #wells-dvt .wells-ja:checked + label,
         #mantrel .wells-ja:checked + label,
-        #sirs .wells-ja:checked + label,
         #wells-le .wells-ja:checked + label,
         #curb65 .wells-ja:checked + label { background-color: #ef4444; color: white; border-color: #ef4444; }
         #qsofa .wells-nei:checked + label,
-        #sepsis .wells-nei:checked + label,
         #abcd2 .wells-nei:checked + label,
         #chads .wells-nei:checked + label,
         #wells-dvt .wells-nei:checked + label,
         #mantrel .wells-nei:checked + label,
-        #sirs .wells-nei:checked + label,
         #wells-le .wells-nei:checked + label,
         #curb65 .wells-nei:checked + label { background-color: #22c55e; color: white; border-color: #22c55e; }
         #wells-dvt .wells-ja[value="-2"]:checked + label { background-color: #22c55e; color: white; border-color: #22c55e; }
@@ -1261,6 +1294,21 @@
         body.dark-mode .advanced-result,
         body.dark-mode .patient-sheet,
         body.dark-mode .modal-content { background: var(--bg-muted); color: var(--text-main); border-color: var(--border-mid); }
+        body.dark-mode .qsofa-news2-advice {
+            background: #111827;
+            border-color: var(--border-mid);
+            color: var(--text-main);
+        }
+        body.dark-mode .qsofa-news2-advice.warn {
+            background: rgba(245, 158, 11, 0.16);
+            border-color: rgba(245, 158, 11, 0.55);
+            color: #fbbf24;
+        }
+        body.dark-mode .qsofa-news2-advice.bad {
+            background: rgba(239, 68, 68, 0.16);
+            border-color: rgba(239, 68, 68, 0.55);
+            color: #fca5a5;
+        }
         body.dark-mode .advanced-table th { background: #334155; color: var(--text-strong); }
         body.dark-mode .advanced-table th,
         body.dark-mode .advanced-table td { border-color: var(--border-mid); }
@@ -1361,12 +1409,10 @@
             border-color: #ef4444;
         }
         body.dark-mode #qsofa .wells-btn input.wells-ja:checked + label,
-        body.dark-mode #sepsis .wells-btn input.wells-ja:checked + label,
         body.dark-mode #abcd2 .wells-btn input.wells-ja:checked + label,
         body.dark-mode #chads .wells-btn input.wells-ja:checked + label,
         body.dark-mode #wells-dvt .wells-btn input.wells-ja:checked + label,
         body.dark-mode #mantrel .wells-btn input.wells-ja:checked + label,
-        body.dark-mode #sirs .wells-btn input.wells-ja:checked + label,
         body.dark-mode #wells-le .wells-btn input.wells-ja:checked + label,
         body.dark-mode #curb65 .wells-btn input.wells-ja:checked + label {
             background-color: #ef4444;
@@ -1374,12 +1420,10 @@
             border-color: #ef4444;
         }
         body.dark-mode #qsofa .wells-btn input.wells-nei:checked + label,
-        body.dark-mode #sepsis .wells-btn input.wells-nei:checked + label,
         body.dark-mode #abcd2 .wells-btn input.wells-nei:checked + label,
         body.dark-mode #chads .wells-btn input.wells-nei:checked + label,
         body.dark-mode #wells-dvt .wells-btn input.wells-nei:checked + label,
         body.dark-mode #mantrel .wells-btn input.wells-nei:checked + label,
-        body.dark-mode #sirs .wells-btn input.wells-nei:checked + label,
         body.dark-mode #wells-le .wells-btn input.wells-nei:checked + label,
         body.dark-mode #curb65 .wells-btn input.wells-nei:checked + label {
             background-color: #22c55e;
