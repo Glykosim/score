@@ -526,6 +526,7 @@ function updateHeaderByCategory(cat){
             renderAllChecklists();
             renderCiwaForm();
             renderNihssForm();
+            enhanceChoicePointBadges();
             setupEventListeners();
             setupChoiceKeyboardSupport();
             initializeSettings();
@@ -719,6 +720,33 @@ function resetForm(silent) {
             if (!silent) showToast("Skjema nullstilt", false);
         }
 
+        function escapeAttr(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function enhanceChoicePointBadges() {
+            var groups = document.querySelectorAll('#abcd2 .pill-radio, #gcs .pill-radio, #chads .chads-top-grid .pill-radio');
+            for (var i = 0; i < groups.length; i++) {
+                groups[i].classList.add('choice-has-points');
+                var inputs = groups[i].querySelectorAll('input[type="radio"], input[type="checkbox"]');
+                for (var j = 0; j < inputs.length; j++) {
+                    var input = inputs[j];
+                    var label = document.querySelector('label[for="' + input.id + '"]');
+                    if (!label || label.dataset.pointEnhanced === 'true') continue;
+                    label.textContent = label.textContent.replace(/\s*\(\d+p\)/g, '');
+                    var badge = document.createElement('span');
+                    badge.className = 'choice-point-badge';
+                    badge.textContent = input.value + 'p';
+                    label.appendChild(badge);
+                    label.dataset.pointEnhanced = 'true';
+                }
+            }
+        }
+
         function renderCiwaForm() {
             var container = document.getElementById('ciwa-form-grid');
             container.innerHTML = '';
@@ -731,7 +759,7 @@ function resetForm(silent) {
                     optionsHtml += '<option value="' + opt.v + '">' + opt.t + '</option>';
                 }
                 
-                var tooltipHtml = item.tooltip ? '<span class="tooltip-icon" title="' + item.tooltip + '">i</span>' : '';
+                var tooltipHtml = item.tooltip ? '<span class="tooltip-icon" tabindex="0" aria-label="' + escapeAttr(item.tooltip) + '" title="' + escapeAttr(item.tooltip) + '" data-tooltip="' + escapeAttr(item.tooltip) + '">i</span>' : '';
                 
                 container.innerHTML += 
                     '<div class="input-card ciwa-card">' +

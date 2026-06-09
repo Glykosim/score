@@ -297,9 +297,34 @@
             background-color: #e5e7eb; color: #4b5563; font-size: 0.75rem;
             font-weight: 700; font-family: Georgia, serif; font-style: italic;
             cursor: help; flex-shrink: 0; margin-left: 0.5rem;
+            position: relative;
             transition: background-color 0.2s;
         }
         .tooltip-icon:hover { background-color: #d1d5db; color: #1f2937; }
+        .tooltip-icon::after {
+            content: attr(data-tooltip);
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.45rem);
+            z-index: 80;
+            width: min(20rem, 72vw);
+            padding: 0.55rem 0.7rem;
+            border-radius: 0.375rem;
+            background: #111827;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 0.78rem;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 1.35;
+            text-align: left;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.22);
+        }
+        .tooltip-icon:hover::after,
+        .tooltip-icon:focus-visible::after {
+            display: block;
+        }
 
         /* Fargekoder for input-felt (verdier) */
         .form-input.input-score-0 { background-color: #dcfce7; border-color: #86efac; }
@@ -313,6 +338,33 @@
         .pill-radio label, .pill-checkbox label { 
             display: inline-block; padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 9999px; 
             cursor: pointer; transition: all 0.2s; background: white; color: #374151; font-size: 0.875rem; user-select: none; text-align: center; margin: 0;
+        }
+        .choice-has-points label {
+            position: relative;
+            padding-right: 2.25rem;
+            min-height: 2.25rem;
+        }
+        .choice-point-badge {
+            display: none;
+            position: absolute;
+            top: 0.22rem;
+            right: 0.38rem;
+            min-width: 1.35rem;
+            padding: 0.05rem 0.32rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.88);
+            color: inherit;
+            font-size: 0.68rem;
+            font-weight: 800;
+            line-height: 1.15;
+            text-align: center;
+            box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.08);
+        }
+        .choice-has-points input[type="radio"]:checked + label .choice-point-badge,
+        .choice-has-points input[type="checkbox"]:checked + label .choice-point-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .pill-checkbox label { text-align: left; width: 100%; border-radius: 0.5rem; }
         .pill-radio label:focus-visible, .pill-checkbox label:focus-visible, .wells-btn label:focus-visible {
@@ -369,6 +421,12 @@
         .ciwa-card { padding: 0.5rem 0.75rem; }
         .ciwa-card .label { margin-bottom: 0.25rem; font-size: 0.8rem; font-weight: 600; }
         .ciwa-select { padding-top: 0.25rem; padding-bottom: 0.25rem; height: 2.25rem; font-size: 0.95rem; }
+        #nihss-form-grid { gap: 0.75rem; border-top: none; padding-top: 0; }
+        #gcs .input-card { padding-bottom: 0.45rem; }
+        #gcs .pill-group { gap: 0.38rem; }
+        #gcs .pill-radio label { padding-top: 0.42rem; padding-bottom: 0.42rem; }
+        .abcd2-grid { gap: 1rem; }
+        .chads-top-grid { gap: 1rem; }
 
         /* --- Wells / Checklists Skjema Spesifikt --- */
         .wells-row { 

@@ -84,7 +84,7 @@
                     <p>NEWS2, TEWS, ONEWS og GCS.</p>
                 </button>
                 <button class="menu-card" onclick="openCategory('other')">
-                    <p>qSOFA, CIWA-Ar, CHA2DS2-VASc, Wells, CURB-65, SIRS, NIHSS, ABCD2, Mantrel og GCS.</p>
+                    <p>qSOFA, CIWA-Ar, CHA₂DS₂-VASc, Wells, CURB-65, SIRS, NIHSS, ABCD2, Mantrel og GCS.</p>
                 </button>
             </div>
         </section>
@@ -102,7 +102,7 @@
             <button onclick="switchTab('gcs')" class="tab-btn" data-target="gcs" data-category="triage other">GCS</button>
             <button onclick="switchTab('qsofa')" class="tab-btn" data-target="qsofa" data-category="other">qSOFA</button>
             <button onclick="switchTab('ciwa')" class="tab-btn" data-target="ciwa" data-category="other">CIWA-Ar</button>
-            <button onclick="switchTab('chads')" class="tab-btn" data-target="chads" data-category="other">CHA2DS2-VASc</button>
+            <button onclick="switchTab('chads')" class="tab-btn" data-target="chads" data-category="other">CHA₂DS₂-VASc</button>
             <button onclick="switchTab('wells-dvt')" class="tab-btn" data-target="wells-dvt" data-category="other">Wells DVT</button>
             <button onclick="switchTab('wells-le')" class="tab-btn" data-target="wells-le" data-category="other">Wells LE</button>
             <button onclick="switchTab('curb65')" class="tab-btn" data-target="curb65" data-category="other">CURB-65</button>
@@ -375,23 +375,23 @@
                 </div>
             </section>
             
-            <!-- CHA2DS2-VASc Section -->
+            <!-- CHA₂DS₂-VASc Section -->
             <section id="chads" class="calc-section">
                <div class="score-info">Brukes ved atrieflimmer for å vurdere risiko for hjerneslag og behov for antikoagulasjon.</div>
-                <div class="grid-2" style="margin-bottom: 1.5rem;">
+                <div class="grid-2 chads-top-grid" style="margin-bottom: 1.5rem;">
                     <div class="input-card">
                         <label class="label">Kjønn</label>
                         <div class="pill-radio pill-group-row">
-                            <input type="radio" name="chads_sex" id="chads_sex_m" value="0" class="hidden"><label for="chads_sex_m">Mann (0p)</label>
-                            <input type="radio" name="chads_sex" id="chads_sex_k" value="1" class="hidden"><label for="chads_sex_k">Kvinne (1p)</label>
+                            <input type="radio" name="chads_sex" id="chads_sex_m" value="0" class="hidden"><label for="chads_sex_m">Mann</label>
+                            <input type="radio" name="chads_sex" id="chads_sex_k" value="1" class="hidden"><label for="chads_sex_k">Kvinne</label>
                         </div>
                     </div>
                     <div class="input-card">
                         <label class="label">Alder</label>
                         <div class="pill-radio pill-group-row">
-                            <input type="radio" name="chads_age" id="chads_age_0" value="0" class="hidden"><label for="chads_age_0">&lt; 65 år (0p)</label>
-                            <input type="radio" name="chads_age" id="chads_age_1" value="1" class="hidden"><label for="chads_age_1">65 - 74 år (1p)</label>
-                            <input type="radio" name="chads_age" id="chads_age_2" value="2" class="hidden"><label for="chads_age_2">&ge; 75 år (2p)</label>
+                            <input type="radio" name="chads_age" id="chads_age_0" value="0" class="hidden"><label for="chads_age_0">&lt; 65 år</label>
+                            <input type="radio" name="chads_age" id="chads_age_1" value="1" class="hidden"><label for="chads_age_1">65 - 74 år</label>
+                            <input type="radio" name="chads_age" id="chads_age_2" value="2" class="hidden"><label for="chads_age_2">&ge; 75 år</label>
                         </div>
                     </div>
                 </div>
@@ -431,48 +431,48 @@
             <!-- NIHSS Section -->
             <section id="nihss" class="calc-section">
                <div class="score-info">Brukes ved hjerneslag for å beskrive og gradere nevrologiske utfall.</div>
-                <div class="grid-2" id="nihss-form-grid"></div>
+                <div class="grid-3" id="nihss-form-grid"></div>
             </section>
 
             <!-- ABCD2 Section -->
             <section id="abcd2" class="calc-section">
                <div class="score-info">Brukes etter TIA for å estimere tidlig risiko for hjerneslag.</div>
-                <div class="grid-2">
+                <div class="grid-3 abcd2-grid">
                     <div class="input-card">
                         <label class="label">Alder</label>
                         <div class="pill-radio pill-group-row">
-                            <input type="radio" name="abcd_age" id="abcd_age_0" value="0" class="hidden"><label for="abcd_age_0">&lt; 60 år (0p)</label>
-                            <input type="radio" name="abcd_age" id="abcd_age_1" value="1" class="hidden"><label for="abcd_age_1">≥ 60 år (1p)</label>
+                            <input type="radio" name="abcd_age" id="abcd_age_0" value="0" class="hidden"><label for="abcd_age_0">&lt; 60 år</label>
+                            <input type="radio" name="abcd_age" id="abcd_age_1" value="1" class="hidden"><label for="abcd_age_1">≥ 60 år</label>
                         </div>
                     </div>
                     <div class="input-card">
                         <label class="label">Blodtrykk</label>
                         <div class="pill-radio pill-group-row">
-                            <input type="radio" name="abcd_bp" id="abcd_bp_0" value="0" class="hidden"><label for="abcd_bp_0">Under grense (0p)</label>
-                            <input type="radio" name="abcd_bp" id="abcd_bp_1" value="1" class="hidden"><label for="abcd_bp_1">≥ 140/90 (1p)</label>
-                        </div>
-                    </div>
-                    <div class="input-card">
-                        <label class="label">Kliniske trekk</label>
-                        <div class="pill-radio pill-group">
-                            <input type="radio" name="abcd_clin" id="abcd_clin_0" value="0" class="hidden"><label for="abcd_clin_0">Annet / ingen (0p)</label>
-                            <input type="radio" name="abcd_clin" id="abcd_clin_1" value="1" class="hidden"><label for="abcd_clin_1">Talevansker uten svakhet (1p)</label>
-                            <input type="radio" name="abcd_clin" id="abcd_clin_2" value="2" class="hidden"><label for="abcd_clin_2">Unilateral svakhet (2p)</label>
-                        </div>
-                    </div>
-                    <div class="input-card">
-                        <label class="label">Varighet</label>
-                        <div class="pill-radio pill-group">
-                            <input type="radio" name="abcd_duration" id="abcd_dur_0" value="0" class="hidden"><label for="abcd_dur_0">&lt; 10 minutter (0p)</label>
-                            <input type="radio" name="abcd_duration" id="abcd_dur_1" value="1" class="hidden"><label for="abcd_dur_1">10-59 minutter (1p)</label>
-                            <input type="radio" name="abcd_duration" id="abcd_dur_2" value="2" class="hidden"><label for="abcd_dur_2">≥ 60 minutter (2p)</label>
+                            <input type="radio" name="abcd_bp" id="abcd_bp_0" value="0" class="hidden"><label for="abcd_bp_0">Under grense</label>
+                            <input type="radio" name="abcd_bp" id="abcd_bp_1" value="1" class="hidden"><label for="abcd_bp_1">≥ 140/90</label>
                         </div>
                     </div>
                     <div class="input-card">
                         <label class="label">Diabetes</label>
                         <div class="pill-radio pill-group-row">
-                            <input type="radio" name="abcd_diabetes" id="abcd_dm_0" value="0" class="hidden"><label for="abcd_dm_0">Nei (0p)</label>
-                            <input type="radio" name="abcd_diabetes" id="abcd_dm_1" value="1" class="hidden"><label for="abcd_dm_1">Ja (1p)</label>
+                            <input type="radio" name="abcd_diabetes" id="abcd_dm_0" value="0" class="hidden"><label for="abcd_dm_0">Nei</label>
+                            <input type="radio" name="abcd_diabetes" id="abcd_dm_1" value="1" class="hidden"><label for="abcd_dm_1">Ja</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Varighet</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="abcd_duration" id="abcd_dur_0" value="0" class="hidden"><label for="abcd_dur_0">&lt; 10 minutter</label>
+                            <input type="radio" name="abcd_duration" id="abcd_dur_1" value="1" class="hidden"><label for="abcd_dur_1">10-59 minutter</label>
+                            <input type="radio" name="abcd_duration" id="abcd_dur_2" value="2" class="hidden"><label for="abcd_dur_2">≥ 60 minutter</label>
+                        </div>
+                    </div>
+                    <div class="input-card">
+                        <label class="label">Kliniske trekk</label>
+                        <div class="pill-radio pill-group">
+                            <input type="radio" name="abcd_clin" id="abcd_clin_0" value="0" class="hidden"><label for="abcd_clin_0">Annet / ingen</label>
+                            <input type="radio" name="abcd_clin" id="abcd_clin_1" value="1" class="hidden"><label for="abcd_clin_1">Talevansker uten svakhet</label>
+                            <input type="radio" name="abcd_clin" id="abcd_clin_2" value="2" class="hidden"><label for="abcd_clin_2">Unilateral svakhet</label>
                         </div>
                     </div>
                 </div>
