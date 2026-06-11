@@ -243,14 +243,25 @@
         .news2-layout {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 0.85rem;
+            gap: 1rem;
             align-items: start;
         }
         .news2-card {
-            padding: 0.7rem;
+            padding: 0.9rem;
         }
+        .news2-resp-card { grid-column: 1; grid-row: 1; }
+        .news2-pulse-card { grid-column: 2; grid-row: 1; }
+        .news2-bp-card { grid-column: 3; grid-row: 1; }
+        .news2-o2-card { grid-column: 4; grid-row: 1; }
+        .news2-temp-card { grid-column: 1; grid-row: 2; }
+        .news2-spo2-card { grid-column: 2; grid-row: 2; }
         .news2-wide {
             grid-column: span 2;
+        }
+        .news2-avpu-stack {
+            grid-column: 3 / 5;
+            grid-row: 2;
+            margin-top: 0;
         }
         .news2-stack {
             display: flex;
@@ -265,20 +276,67 @@
             padding-top: 0.45rem;
             padding-bottom: 0.45rem;
         }
+        .news2-layout .input-wrapper {
+            margin-top: 0.25rem;
+        }
         .news2-layout .pill-radio label {
             padding: 0.45rem 0.85rem;
         }
-        .news2-pill-row {
+        .pill-group-row.news2-pill-row {
             gap: 0.45rem;
+            flex-wrap: nowrap;
+        }
+        .pill-group-row.news2-pill-row label {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .news2-o2-card,
+        .news2-avpu-stack {
+            align-self: stretch;
+        }
+        .news2-avpu-stack > .input-card {
+            height: 100%;
         }
         .news2-scale-card {
-            align-self: end;
+            grid-column: 4;
+            grid-row: 3;
+            align-self: start;
+        }
+        .pill-group-row.news2-scale-row {
+            flex-wrap: nowrap;
+        }
+        .pill-group-row.news2-scale-row label {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .news2-avpu-stack .pill-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .news2-avpu-stack .pill-radio label {
+            width: 100%;
+            text-align: center;
         }
         .section-subtitle {
             margin: 0 0 0.75rem;
             color: var(--text-strong);
             font-size: 1rem;
             font-weight: 800;
+        }
+        .qsofa-news2-title {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .qsofa-news2-title h2 {
+            margin: 0;
+            font: inherit;
+        }
+        .qsofa-news2-tooltip::after {
+            left: 0;
+            right: auto;
+            width: min(28rem, calc(100vw - 3rem));
         }
         .qsofa-news2-panel {
             background: var(--bg-surface);
@@ -305,6 +363,9 @@
         .qsofa-news2-layout .form-select {
             min-height: 2.45rem;
         }
+        .qsofa-news2-layout .input-wrapper {
+            margin-top: 0;
+        }
         .qsofa-news2-layout .pill-radio label {
             padding: 0.38rem 0.65rem;
             min-height: 2.45rem;
@@ -315,8 +376,29 @@
         .qsofa-news2-wide {
             grid-column: span 3;
         }
+        .qsofa-news2-avpu-card {
+            grid-column: 3 / 5;
+            grid-row: 2;
+        }
+        .qsofa-news2-scale-card {
+            grid-column: 4;
+            grid-row: 3;
+        }
+        .qsofa-news2-avpu-card .pill-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .qsofa-news2-avpu-card .pill-radio label {
+            width: 100%;
+        }
         .qsofa-news2-advice {
-            margin-top: 0.75rem;
+            grid-column: 1 / 4;
+            grid-row: 3;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+            margin-top: 0;
             border-radius: 0.5rem;
             border: 1px solid var(--border-soft);
             padding: 0.7rem 0.85rem;
@@ -334,6 +416,11 @@
             background: #fef2f2;
             border-color: #fca5a5;
             color: #991b1b;
+        }
+        .news2-scale-row input[value="1"]:checked + label {
+            background-color: #dcfce7;
+            color: #166534;
+            border-color: #86efac;
         }
         .tews-top-grid {
             display: grid;
@@ -361,6 +448,20 @@
             .news2-layout {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
+            .news2-resp-card,
+            .news2-pulse-card,
+            .news2-bp-card,
+            .news2-o2-card,
+            .news2-temp-card,
+            .news2-spo2-card,
+            .news2-scale-card,
+            .news2-avpu-stack,
+            .qsofa-news2-avpu-card,
+            .qsofa-news2-scale-card,
+            .qsofa-news2-advice {
+                grid-column: auto;
+                grid-row: auto;
+            }
             .tews-top-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
@@ -373,6 +474,12 @@
             .news2-wide {
                 grid-column: span 2;
             }
+            .news2-scale-card {
+                grid-column: span 2;
+            }
+            .news2-avpu-stack {
+                grid-column: 1 / -1;
+            }
         }
         @media (max-width: 640px) {
             .news2-layout {
@@ -380,6 +487,14 @@
             }
             .news2-wide {
                 grid-column: span 1;
+            }
+            .news2-scale-card,
+            .news2-avpu-stack,
+            .qsofa-news2-advice {
+                grid-column: span 1;
+            }
+            .news2-avpu-stack .pill-group {
+                grid-template-columns: 1fr;
             }
             .qsofa-news2-wide {
                 grid-column: span 1;
@@ -395,7 +510,7 @@
                 flex-wrap: nowrap;
             }
             .abcd-bp-grid .input-wrapper {
-                width: min(9rem, calc((100vw - 6rem) / 2));
+                width: min(7.25rem, calc((100vw - 6rem) / 2));
             }
         }
         /* Grid for GCS specifically on mobile */
@@ -452,6 +567,7 @@
             font-weight: 500;
             line-height: 1.35;
             text-align: left;
+            white-space: pre-line;
             box-shadow: 0 10px 22px rgba(15, 23, 42, 0.22);
         }
         .tooltip-icon:hover::after,
@@ -471,6 +587,13 @@
         .pill-radio label, .pill-checkbox label { 
             display: inline-block; padding: 0.5rem 1rem; border: 1px solid #d1d5db; border-radius: 9999px; 
             cursor: pointer; transition: all 0.2s; background: white; color: #374151; font-size: 0.875rem; user-select: none; text-align: center; margin: 0;
+        }
+        .pill-group-row label {
+            flex: 1 1 0;
+            min-width: 6.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .choice-has-points label {
             position: relative;
@@ -541,37 +664,50 @@
         .abcd2-grid { gap: 1rem; }
         .abcd-top-panel {
             display: grid;
-            grid-template-columns: minmax(22rem, 0.95fr) minmax(30rem, 1.35fr);
+            grid-template-columns: minmax(16rem, 0.45fr) minmax(30rem, 1fr);
             gap: 1rem;
             align-items: start;
             margin-bottom: 1rem;
         }
         .abcd-risk-list {
-            align-self: stretch;
+            align-self: start;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 0.35rem;
-            min-height: 100%;
-            padding: 0.55rem 0.65rem;
-            background: rgba(255, 255, 255, 0.55);
+            gap: 0;
+            min-height: 0;
+            padding: 0;
+            background: transparent;
+            border: none;
         }
         .abcd-risk-list .wells-row {
-            margin: 0;
-            padding: 0.55rem 0;
+            margin: 0 -0.5rem;
+            padding: 0.5rem;
         }
         .abcd-risk-list .wells-row:last-child { border-bottom: none; }
         .abcd-bp-card {
-            min-height: 100%;
             margin-bottom: 0;
+            max-width: 26rem;
+            min-height: 0;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .abcd-bp-card .label {
+            margin-bottom: 0;
+            flex: 0 0 auto;
         }
         .abcd-bp-grid {
             display: flex;
             align-items: center;
             gap: 0.4rem;
+            flex: 0 1 auto;
         }
         .abcd-bp-grid .input-wrapper {
-            width: 9.5rem;
+            width: 7.25rem;
         }
         .abcd-bp-separator {
             color: var(--text-subtle);
@@ -865,10 +1001,23 @@
         }
         .sources-table th,
         .sources-table td {
-            padding: 0.65rem 0.75rem;
+            padding: 0.65rem 0.6rem;
             border-bottom: 1px solid var(--border-soft);
             text-align: left;
             vertical-align: top;
+        }
+        .sources-table th:nth-child(2),
+        .sources-table td:nth-child(2) {
+            padding-left: 0.35rem;
+        }
+        .sources-table th:nth-child(3),
+        .sources-table td:nth-child(3) {
+            border-left: 2px solid var(--border-soft);
+            padding-left: 0.9rem;
+        }
+        .sources-table th:nth-child(4),
+        .sources-table td:nth-child(4) {
+            padding-left: 0.35rem;
         }
         .sources-table th {
             position: sticky;
@@ -878,13 +1027,17 @@
             color: var(--text-strong);
             font-weight: 800;
         }
-        .sources-table td:first-child {
-            width: 10rem;
+        .sources-table td:first-child,
+        .sources-table td:nth-child(3) {
+            width: 18%;
             color: var(--text-strong);
             font-weight: 750;
         }
-        .sources-table td:nth-child(2) {
-            width: 12rem;
+        .sources-table td:nth-child(2),
+        .sources-table td:nth-child(4) {
+            width: 32%;
+            color: var(--text-muted);
+            line-height: 1.35;
         }
         .sources-table tr:last-child td { border-bottom: none; }
         .sources-table a {
@@ -1003,9 +1156,36 @@
         }
         .advanced-q { width: 72%; }
         .advanced-yn { width: 14%; text-align: center; }
+        .advanced-table tbody td:first-child {
+            width: 72%;
+            vertical-align: middle;
+        }
         .advanced-radio {
+            position: relative;
+            width: 14%;
             text-align: center;
             vertical-align: middle !important;
+        }
+        .advanced-radio input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .advanced-radio label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 4.25rem;
+            min-height: 2.35rem;
+            padding: 0.45rem 0.85rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            background: #ffffff;
+            color: #374151;
+            font-weight: 700;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
         }
         .advanced-list-grid {
             display: grid;
@@ -1016,7 +1196,6 @@
             .advanced-list-grid { grid-template-columns: 1fr; }
             .advanced-table { font-size: 0.84rem; }
         }
-        .advanced-radio input { transform: scale(1.25); cursor: pointer; }
         .advanced-result {
             border-radius: 0.5rem;
             border: 1px solid #d1d5db;
@@ -1154,13 +1333,26 @@
         .advanced-radio:hover {
             background-color: #eff6ff;
         }
+        .advanced-radio:hover label {
+            border-color: #93c5fd;
+        }
         .advanced-radio.is-yes {
-            background-color: #fecaca;
-            color: #7f1d1d;
+            background-color: transparent;
+            color: inherit;
         }
         .advanced-radio.is-no {
-            background-color: #dcfce7;
-            color: #14532d;
+            background-color: transparent;
+            color: inherit;
+        }
+        .advanced-radio.is-yes label {
+            background-color: #ef4444;
+            color: #ffffff;
+            border-color: #ef4444;
+        }
+        .advanced-radio.is-no label {
+            background-color: #22c55e;
+            color: #052e16;
+            border-color: #22c55e;
         }
         .advanced-radio input {
             pointer-events: none;
@@ -1294,6 +1486,13 @@
         body.dark-mode .advanced-result,
         body.dark-mode .patient-sheet,
         body.dark-mode .modal-content { background: var(--bg-muted); color: var(--text-main); border-color: var(--border-mid); }
+        body.dark-mode .abcd-risk-list {
+            background: transparent;
+            border: none;
+        }
+        body.dark-mode .abcd-risk-list .wells-row {
+            border-bottom-color: var(--border-soft);
+        }
         body.dark-mode .qsofa-news2-advice {
             background: #111827;
             border-color: var(--border-mid);
@@ -1336,6 +1535,10 @@
         body.dark-mode .sources-table td {
             border-color: var(--border-mid);
         }
+        body.dark-mode .sources-table th:nth-child(3),
+        body.dark-mode .sources-table td:nth-child(3) {
+            border-left-color: var(--border-mid);
+        }
         body.dark-mode .sources-table a {
             color: #93c5fd;
         }
@@ -1365,12 +1568,30 @@
             color: var(--text-strong);
         }
         body.dark-mode .advanced-radio.is-yes {
-            background-color: #7f1d1d;
-            color: #fee2e2;
+            background-color: transparent;
+            color: inherit;
         }
         body.dark-mode .advanced-radio.is-no {
-            background-color: #14532d;
-            color: #dcfce7;
+            background-color: transparent;
+            color: inherit;
+        }
+        body.dark-mode .advanced-radio label {
+            background: var(--bg-surface);
+            color: var(--text-main);
+            border-color: var(--border-mid);
+        }
+        body.dark-mode .advanced-radio:hover label {
+            border-color: #93c5fd;
+        }
+        body.dark-mode .advanced-radio.is-yes label {
+            background-color: #ef4444;
+            color: #ffffff;
+            border-color: #ef4444;
+        }
+        body.dark-mode .advanced-radio.is-no label {
+            background-color: #22c55e;
+            color: #052e16;
+            border-color: #22c55e;
         }
         body.dark-mode .pill-radio input[type="radio"]:checked + label,
         body.dark-mode .pill-checkbox input[type="checkbox"]:checked + label {

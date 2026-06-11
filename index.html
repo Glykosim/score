@@ -93,7 +93,7 @@
         <nav class="tabs-nav hidden" id="main-nav">
             <button onclick="switchTab('news2')" class="tab-btn active" data-target="news2" data-category="triage">NEWS2</button>
             <button onclick="switchTab('tews')" class="tab-btn" data-target="tews" data-category="triage">TEWS</button>
-            <button onclick="switchTab('onews')" class="tab-btn" data-target="onews" data-category="triage" title="For gravide fra uke 20 og inntil 6 uker postpartum.">ONEWS</button>
+            <button onclick="switchTab('onews')" class="tab-btn" data-target="onews" data-category="triage">ONEWS</button>
             <button onclick="switchTab('gcs')" class="tab-btn" data-target="gcs" data-category="triage">GCS</button>
             <button onclick="switchTab('qsofa')" class="tab-btn" data-target="qsofa" data-category="other">qSOFA</button>
             <button onclick="switchTab('ciwa')" class="tab-btn" data-target="ciwa" data-category="other">CIWA-Ar</button>
@@ -112,63 +112,64 @@
             <!-- NEWS2 Section -->
             <section id="news2" class="calc-section active">
                 <div class="news2-layout">
-                    <div class="input-card news2-card">
+                    <div class="input-card news2-card news2-resp-card">
                         <label class="label">Resp. frekvens</label>
                         <div class="input-wrapper">
                             <input type="text" inputmode="numeric" id="n2_resp" oninput="formatInput(this, false)" onblur="validateInput(this, 5, 70)" class="form-input">
                             <span class="input-unit">/min</span>
                         </div>
                     </div>
-                    <div class="input-card news2-card">
+                    <div class="input-card news2-card news2-pulse-card">
                         <label class="label">Puls</label>
                         <div class="input-wrapper">
                             <input type="text" inputmode="numeric" id="n2_puls" oninput="formatInput(this, false)" onblur="validateInput(this, 20, 200)" class="form-input">
                             <span class="input-unit">/min</span>
                         </div>
                     </div>
-                    <div class="input-card news2-card">
+                    <div class="input-card news2-card news2-bp-card">
                         <label class="label">Systolisk BT</label>
                         <div class="input-wrapper">
                             <input type="text" inputmode="numeric" id="n2_bp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 250)" class="form-input">
                             <span class="input-unit">mmHg</span>
                         </div>
                     </div>
-                    <div class="input-card news2-card">
+                    <div class="input-card news2-card news2-o2-card">
                         <label class="label">Tilførsel av oksygen</label>
                         <div class="pill-radio pill-group-row news2-pill-row">
                             <input type="radio" name="n2_o2" id="n2_o2_0" value="0" data-text="Nei" class="hidden"><label for="n2_o2_0">Nei</label>
                             <input type="radio" name="n2_o2" id="n2_o2_2" value="2" data-text="Ja" class="hidden"><label for="n2_o2_2">Ja</label>
                         </div>
                     </div>
-                    <div class="input-card news2-card">
+                    <div class="input-card news2-card news2-temp-card">
                         <label class="label">Temperatur</label>
                         <div class="input-wrapper">
-                            <input type="text" inputmode="numeric" id="n2_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
+                            <input type="text" inputmode="numeric" id="n2_temp" oninput="formatTemperatureInput(this, event)" onblur="validateTemperatureInput(this, 35, 41)" class="form-input">
                             <span class="input-unit">°C</span>
                         </div>
                     </div>
-                    <div class="input-card news2-card">
+                    <div class="input-card news2-card news2-spo2-card">
                         <label class="label">SpO2 (%)</label>
                         <div class="input-wrapper">
                             <input type="text" inputmode="numeric" id="n2_spo2" oninput="formatInput(this, false)" onblur="validateInput(this, 50, 100)" class="form-input" style="padding-right: 2rem;">
                             <span class="input-unit">%</span>
                         </div>
                     </div>
-                    <div class="news2-stack news2-wide">
+                    <div class="news2-stack news2-wide news2-avpu-stack">
                         <div class="input-card news2-card">
-                            <label class="label">Bevissthet (ACVPU)</label>
+                            <label class="label">Bevissthet</label>
                             <div class="pill-radio pill-group">
-                                <input type="radio" name="n2_avpu" id="n2_a_0" value="0" data-text="A (Våken)" class="hidden"><label for="n2_a_0">A (Våken / Normal)</label>
-                                <input type="radio" name="n2_avpu" id="n2_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="n2_a_3">C/V/P/U (Forvirring, smerte, sløv)</label>
+                                <input type="radio" name="n2_avpu" id="n2_a_0" value="0" data-text="A (Våken)" class="hidden"><label for="n2_a_0">Våken / Normal</label>
+                                <input type="radio" name="n2_avpu" id="n2_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="n2_a_3">Forvirring, smerte, sløv</label>
                             </div>
                         </div>
                     </div>
                     <div class="input-card news2-card news2-scale-card">
                         <label class="label">SpO2-skala</label>
-                        <select id="news2-scale" class="form-select" tabindex="-1" onchange="handleScaleChange()">
-                            <option value="1" selected>Skala 1 (Standard)</option>
-                            <option value="2">Skala 2 (KOLS/hyperkapnisk svikt)</option>
-                        </select>
+                        <input type="hidden" id="news2-scale" value="1">
+                        <div class="pill-radio pill-group-row news2-scale-row">
+                            <input type="radio" name="news2_scale_choice" id="news2_scale_1" value="1" class="hidden" tabindex="-1" checked onchange="document.getElementById('news2-scale').value=this.value; handleScaleChange()"><label for="news2_scale_1">Skala 1</label>
+                            <input type="radio" name="news2_scale_choice" id="news2_scale_2" value="2" class="hidden" tabindex="-1" onchange="document.getElementById('news2-scale').value=this.value; handleScaleChange()"><label for="news2_scale_2">Skala 2</label>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -212,7 +213,7 @@
                     <div class="input-card">
                         <label class="label">Temperatur</label>
                         <div class="input-wrapper">
-                            <input type="text" inputmode="numeric" id="t_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 30, 43)" class="form-input">
+                            <input type="text" inputmode="numeric" id="t_temp" oninput="formatTemperatureInput(this, event)" onblur="validateTemperatureInput(this, 30, 43)" class="form-input">
                             <span class="input-unit">°C</span>
                         </div>
                     </div>
@@ -257,7 +258,7 @@
                 </div>
 
                 <div class="input-card tews-avpu-card">
-                    <label class="label">Bevissthet (AVPU)</label>
+                    <label class="label">Bevissthet</label>
                     <div class="pill-radio tews-avpu-grid">
                         <input type="radio" name="tews_avpu" id="t_a_0" value="0" data-text="Våken/normal" class="hidden"><label for="t_a_0">A: Våken / normal kontakt</label>
                         <input type="radio" name="tews_avpu" id="t_a_1" value="1" data-text="Reagerer på tiltale" class="hidden"><label for="t_a_1">V: Slapp / reagerer på tiltale</label>
@@ -275,7 +276,10 @@
                 </div>
                 <div id="qsofa-news2-panel" class="qsofa-news2-panel hidden">
                     <div class="score-info qsofa-news2-info">qSOFA &ge; 2: vurder NEWS2 videre for samlet risikovurdering ved mistenkt sepsis.</div>
-                    <h2 class="section-subtitle">NEWS2</h2>
+                    <div class="section-subtitle qsofa-news2-title">
+                        <h2>NEWS2</h2>
+                        <span class="tooltip-icon qsofa-news2-tooltip" tabindex="0" aria-label="NEWS2 ved sepsismistanke" data-tooltip="0-4 poeng: lav risiko for sepsis.&#10;5-6 poeng: moderat risiko.&#10;>7 poeng: høy risiko.&#10;Skår på 3 fra én parameter alene: forhøyet risiko.">i</span>
+                    </div>
                     <div class="news2-layout qsofa-news2-layout">
                         <div class="input-card news2-card">
                             <label class="label">Resp. frekvens</label>
@@ -319,22 +323,23 @@
                                 <span class="input-unit">%</span>
                             </div>
                         </div>
-                        <div class="input-card news2-card qsofa-news2-wide">
-                            <label class="label">Bevissthet (ACVPU)</label>
+                        <div class="input-card news2-card qsofa-news2-wide qsofa-news2-avpu-card">
+                            <label class="label">Bevissthet</label>
                             <div class="pill-radio pill-group">
-                                <input type="radio" name="qsn_avpu" id="qsn_a_0" value="0" data-text="A (Våken)" class="hidden"><label for="qsn_a_0">A (Våken / Normal)</label>
-                                <input type="radio" name="qsn_avpu" id="qsn_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="qsn_a_3">C/V/P/U (Forvirring, smerte, sløv)</label>
+                                <input type="radio" name="qsn_avpu" id="qsn_a_0" value="0" data-text="A (Våken)" class="hidden"><label for="qsn_a_0">Våken / Normal</label>
+                                <input type="radio" name="qsn_avpu" id="qsn_a_3" value="3" data-text="C, V, P, U" class="hidden"><label for="qsn_a_3">Forvirring, smerte, sløv</label>
                             </div>
                         </div>
-                        <div class="input-card news2-card">
+                        <div class="input-card news2-card qsofa-news2-scale-card">
                             <label class="label">SpO2-skala</label>
-                            <select id="qsn_scale" class="form-select" tabindex="-1" onchange="calculateScore()">
-                                <option value="1" selected>Skala 1</option>
-                                <option value="2">Skala 2</option>
-                            </select>
+                            <input type="hidden" id="qsn_scale" value="1">
+                            <div class="pill-radio pill-group-row news2-scale-row">
+                                <input type="radio" name="qsn_scale_choice" id="qsn_scale_1" value="1" class="hidden" tabindex="-1" checked onchange="document.getElementById('qsn_scale').value=this.value; calculateScore()"><label for="qsn_scale_1">Skala 1</label>
+                                <input type="radio" name="qsn_scale_choice" id="qsn_scale_2" value="2" class="hidden" tabindex="-1" onchange="document.getElementById('qsn_scale').value=this.value; calculateScore()"><label for="qsn_scale_2">Skala 2</label>
+                            </div>
                         </div>
+                        <div id="qsofa-news2-advice" class="qsofa-news2-advice warn" aria-live="polite">Fyll inn felter i NEWS2 ved mistanke om sepsis.</div>
                     </div>
-                    <div id="qsofa-news2-advice" class="qsofa-news2-advice" aria-live="polite"></div>
                 </div>
             </section>
 
@@ -379,7 +384,7 @@
                     <div class="input-card">
                         <label class="label">Temperatur</label>
                         <div class="input-wrapper">
-                            <input type="text" inputmode="numeric" id="o_temp" oninput="formatTemperatureInput(this, event)" onblur="validateInput(this, 35, 41)" class="form-input">
+                            <input type="text" inputmode="numeric" id="o_temp" oninput="formatTemperatureInput(this, event)" onblur="validateTemperatureInput(this, 35, 41)" class="form-input">
                             <span class="input-unit">°C</span>
                         </div>
                     </div>
@@ -492,12 +497,12 @@
                         <label class="label">Blodtrykk</label>
                         <div class="abcd-bp-grid">
                             <div class="input-wrapper">
-                                <input type="text" inputmode="numeric" id="abcd_sbp" oninput="formatAbcdSbpInput(this)" onblur="validateInput(this, 50, 300)" class="form-input" aria-label="Systolisk blodtrykk" maxlength="3">
+                                <input type="text" inputmode="numeric" id="abcd_sbp" oninput="formatAbcdSbpInput(this)" onblur="validateAbcdBloodPressure(this, 50, 300)" class="form-input" aria-label="Systolisk blodtrykk" maxlength="3">
                                 <span class="input-unit">sys</span>
                             </div>
                             <span class="abcd-bp-separator">/</span>
                             <div class="input-wrapper">
-                                <input type="text" inputmode="numeric" id="abcd_dbp" oninput="formatInput(this, false)" onblur="validateInput(this, 30, 200)" class="form-input" aria-label="Diastolisk blodtrykk" maxlength="3">
+                                <input type="text" inputmode="numeric" id="abcd_dbp" oninput="formatInput(this, false)" onblur="validateAbcdBloodPressure(this, 30, 200)" class="form-input" aria-label="Diastolisk blodtrykk" maxlength="3">
                                 <span class="input-unit">dia</span>
                             </div>
                         </div>
@@ -553,27 +558,20 @@
             <div class="advanced-title-row"><h2>Avansert hastegradvurdering</h2><button class="reset-btn" onclick="closeAdvancedNEWS2()">← Tilbake til NEWS2</button></div>
                         
             <table class="advanced-table">
-                <thead>
-                    <tr>
-                        <th class="advanced-q"></th>
-                        <th class="advanced-yn">JA</th>
-                        <th class="advanced-yn">NEI</th>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr>
                         <td>Bruker pasienten faste medisiner?</td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q1" value="ja" onchange="calculateAdvancedNEWS2()"></td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q1" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q1" id="adv_q1_ja" value="ja" onchange="calculateAdvancedNEWS2()"><label for="adv_q1_ja">Ja</label></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q1" id="adv_q1_nei" value="nei" onchange="calculateAdvancedNEWS2()"><label for="adv_q1_nei">Nei</label></td>
                     </tr>
                     <tr>
                         <td>Har pasienten nylig vært i kontakt med helsepersonell om det pasienten søker hjelp for nå?</td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q2" value="ja" onchange="calculateAdvancedNEWS2()"></td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q2" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q2" id="adv_q2_ja" value="ja" onchange="calculateAdvancedNEWS2()"><label for="adv_q2_ja">Ja</label></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q2" id="adv_q2_nei" value="nei" onchange="calculateAdvancedNEWS2()"><label for="adv_q2_nei">Nei</label></td>
                     </tr>
                     <tr>
                         <td>
-                            <strong>Pasienten har ikke:</strong><br>
+                            <strong>Pasienten har:</strong><br>
                             - Diabetes type 1 eller 2<br>
                             - Kronisk rusmiddelbruk<br>
                             - Leversvikt eller nyresvikt<br>
@@ -584,22 +582,22 @@
                             - KOLS/astma<br>
                             - Hjerte- og karsykdom
                         </td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q3" value="ja" onchange="calculateAdvancedNEWS2()"></td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q3" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q3" id="adv_q3_ja" value="ja" onchange="calculateAdvancedNEWS2()"><label for="adv_q3_ja">Ja</label></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q3" id="adv_q3_nei" value="nei" onchange="calculateAdvancedNEWS2()"><label for="adv_q3_nei">Nei</label></td>
                     </tr>
                     <tr>
                         <td>
-                            <strong>Pasienten er ikke:</strong><br>
+                            <strong>Pasienten er:</strong><br>
                             - Gravid<br>
                             - Beboer i sykehjem eller omsorgsbolig
                         </td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q4" value="ja" onchange="calculateAdvancedNEWS2()"></td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q4" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q4" id="adv_q4_ja" value="ja" onchange="calculateAdvancedNEWS2()"><label for="adv_q4_ja">Ja</label></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q4" id="adv_q4_nei" value="nei" onchange="calculateAdvancedNEWS2()"><label for="adv_q4_nei">Nei</label></td>
                     </tr>
                     <tr>
                         <td>Er pasienten usikker på om det er trygt å dra hjem, eller ønsker pasienten legevurdering likevel?</td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q5" value="ja" onchange="calculateAdvancedNEWS2()"></td>
-                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q5" value="nei" onchange="calculateAdvancedNEWS2()"></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q5" id="adv_q5_ja" value="ja" onchange="calculateAdvancedNEWS2()"><label for="adv_q5_ja">Ja</label></td>
+                        <td class="advanced-radio" onclick="selectAdvancedCell(this)"><input type="radio" name="adv_q5" id="adv_q5_nei" value="nei" onchange="calculateAdvancedNEWS2()"><label for="adv_q5_nei">Nei</label></td>
                     </tr>
                 </tbody>
             </table>
@@ -687,25 +685,22 @@
                 <table class="sources-table">
                     <thead>
                         <tr>
-                            <th>System</th>
-                            <th>Kilde</th>
+                            <th>Triagesystem</th>
+                            <th>Beskrivelse</th>
+                            <th>Andre system</th>
                             <th>Beskrivelse</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>NEWS2</td><td><a href="docs/NEWS2.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt sykdom hos voksne</td></tr>
-                        <tr><td>TEWS</td><td><a href="docs/TEWS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt sykdom hos barn</td></tr>
-                        <tr><td>ONEWS</td><td><a href="docs/ONEWS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt sykdom hos gravide</td></tr>
-                        <tr><td>GCS</td><td><a href="docs/GCS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Bevissthetsnivå</td></tr>
-                        <tr><td>qSOFA</td><td><a href="docs/qSOFA.pdf" target="_blank" rel="noopener">PDF</a></td><td>Mistenkt sepsis</td></tr>
-                        <tr><td>CIWA-Ar</td><td><a href="docs/CIWA_AR.pdf" target="_blank" rel="noopener">PDF</a></td><td>Alkoholabstinens</td></tr>
-                        <tr><td>CHA₂DS₂-VASc</td><td><a href="docs/CHA%E2%82%82DS%E2%82%82-VASc.pdf" target="_blank" rel="noopener">PDF</a></td><td>Atrieflimmer</td></tr>
-                        <tr><td>Wells DVT</td><td><a href="docs/Wells%20DVT.pdf" target="_blank" rel="noopener">PDF</a></td><td>Dyp venetrombose</td></tr>
-                        <tr><td>Wells LE</td><td><a href="docs/Wells%20LE.pdf" target="_blank" rel="noopener">PDF</a></td><td>Lungeemboli</td></tr>
-                        <tr><td>CRB-65</td><td><a href="docs/CRB65.pdf" target="_blank" rel="noopener">PDF</a></td><td>Samfunnservervet pneumoni</td></tr>
-                        <tr><td>NIHSS</td><td><a href="docs/NIHSS.pdf" target="_blank" rel="noopener">PDF</a></td><td>Hjerneslag</td></tr>
-                        <tr><td>ABCD2</td><td><a href="docs/ABCD2.pdf" target="_blank" rel="noopener">PDF</a></td><td>TIA</td></tr>
-                        <tr><td>Mantrel</td><td><a href="docs/MANTREL.pdf" target="_blank" rel="noopener">PDF</a></td><td>Akutt appendisitt</td></tr>
+                        <tr><td><a href="docs/NEWS2.pdf" target="_blank" rel="noopener">NEWS2</a></td><td>Triagesystem for voksne.</td><td><a href="docs/qSOFA.pdf" target="_blank" rel="noopener">qSOFA</a></td><td>Rask vurdering av risiko ved mistenkt sepsis.</td></tr>
+                        <tr><td><a href="docs/TEWS.pdf" target="_blank" rel="noopener">TEWS</a></td><td>Triagesystem for barn.</td><td><a href="docs/CIWA_AR.pdf" target="_blank" rel="noopener">CIWA-Ar</a></td><td>Skåring av alkoholabstinens.</td></tr>
+                        <tr><td><a href="docs/ONEWS.pdf" target="_blank" rel="noopener">ONEWS</a></td><td>Triagesystem for gravide og barselkvinner.</td><td><a href="docs/CHA%E2%82%82DS%E2%82%82-VASc.pdf" target="_blank" rel="noopener">CHA₂DS₂-VASc</a></td><td>Tromboembolisk risiko ved atrieflimmer.</td></tr>
+                        <tr><td><a href="docs/GCS.pdf" target="_blank" rel="noopener">GCS</a></td><td>Score for bevissthetsnivå.</td><td><a href="docs/Wells%20DVT.pdf" target="_blank" rel="noopener">Wells DVT</a></td><td>Klinisk sannsynlighet for dyp venetrombose.</td></tr>
+                        <tr><td></td><td></td><td><a href="docs/Wells%20LE.pdf" target="_blank" rel="noopener">Wells LE</a></td><td>Klinisk sannsynlighet for lungeemboli.</td></tr>
+                        <tr><td></td><td></td><td><a href="docs/CRB65.pdf" target="_blank" rel="noopener">CRB-65</a></td><td>Risikovurdering ved pneumoni.</td></tr>
+                        <tr><td></td><td></td><td><a href="docs/NIHSS.pdf" target="_blank" rel="noopener">NIHSS</a></td><td>Nevrologiske utfall ved hjerneslag.</td></tr>
+                        <tr><td></td><td></td><td><a href="docs/ABCD2.pdf" target="_blank" rel="noopener">ABCD2</a></td><td>Risikovurdering etter TIA for tidlig hjerneslag.</td></tr>
+                        <tr><td></td><td></td><td><a href="docs/MANTREL.pdf" target="_blank" rel="noopener">Mantrel</a></td><td>Skåring ved vurdering av appendisitt.</td></tr>
                     </tbody>
                 </table>
             </div>

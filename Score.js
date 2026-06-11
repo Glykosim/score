@@ -426,9 +426,9 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
         var ciwaData = [
             { id: "ciwa_1", title: "Kvalme og oppkast", tooltip: "Spør: \"Føler du deg kvalm? Har du kastet opp?\"", options: [ {v:0, t:"0 - Ingen kvalme/oppkast"}, {v:1, t:"1 - Lett kvalme, ingen oppkast"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Intermitterende kvalme med brekninger"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Stadig kvalme, hyppige brekninger/oppkast"} ] },
             { id: "ciwa_2", title: "Tremor (skjelving)", tooltip: "Armene utstrakt med spredte fingre.", options: [ {v:0, t:"0 - Ingen tremor"}, {v:1, t:"1 - Ikke synlig, men kan kjennes"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Moderat, med strakte armer"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Kraftig, selv uten strakte armer"} ] },
-            { id: "ciwa_3", title: "Svette", tooltip: "", options: [ {v:0, t:"0 - Ingen svette"}, {v:1, t:"1 - Klam i hendene"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Perler av svette på pannen"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Gjennomvåt av svette"} ] },
+            { id: "ciwa_3", title: "Svette", tooltip: "Observasjon", options: [ {v:0, t:"0 - Ingen svette"}, {v:1, t:"1 - Klam i hendene"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Perler av svette på pannen"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Gjennomvåt av svette"} ] },
             { id: "ciwa_4", title: "Angst", tooltip: "Spør: \"Føler du deg nervøs?\"", options: [ {v:0, t:"0 - Ingen angst, rolig"}, {v:1, t:"1 - Mildt engstelig"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Moderat engstelig eller urolig"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Akutt panikk, sterk dødsangst"} ] },
-            { id: "ciwa_5", title: "Agitasjon / Uro", tooltip: "", options: [ {v:0, t:"0 - Normal aktivitet"}, {v:1, t:"1 - Noe overaktiv"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Moderat urolig og rastløs"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Ganger frem og tilbake, kaster på seg"} ] },
+            { id: "ciwa_5", title: "Agitasjon / Uro", tooltip: "Obervasjon", options: [ {v:0, t:"0 - Normal aktivitet"}, {v:1, t:"1 - Noe overaktiv"}, {v:2, t:"2"}, {v:3, t:"3"}, {v:4, t:"4 - Moderat urolig og rastløs"}, {v:5, t:"5"}, {v:6, t:"6"}, {v:7, t:"7 - Ganger frem og tilbake, kaster på seg"} ] },
             { id: "ciwa_6", title: "Taktile forstyrrelser", tooltip: "Spør: \"Har du noe form for kløe, prikking, stikking, brennende/sviende følelse, nummenhet, eller kjenner du at småkryp kravler på eller under huden din?\"", options: [ {v:0, t:"0 - Ingen"}, {v:1, t:"1 - Veldig mild kløe/prikking/nummenhet"}, {v:2, t:"2 - Mild kløe/prikking/nummenhet"}, {v:3, t:"3 - Moderat kløe/prikking/nummenhet"}, {v:4, t:"4 - Sterke hallusinasjoner"}, {v:5, t:"5 - Sterke og vedvarende hallusinasjoner"}, {v:6, t:"6 - Ekstremt sterke hallusinasjoner"}, {v:7, t:"7 - Kontinuerlige hallusinasjoner"} ] },
             { id: "ciwa_7", title: "Auditive forstyrrelser", tooltip: "Spør: \"Er du mer oppmerksom på lyder rundt deg? Er de ubehagelige? Skremmer de deg? Hører du noe som er urovekkende? Hører du ting som du vet ikke er der?\"", options: [ {v:0, t:"0 - Ingen"}, {v:1, t:"1 - Veldig mild skvettenhet/lydømfintlighet"}, {v:2, t:"2 - Mild skvettenhet/lydømfintlighet"}, {v:3, t:"3 - Moderat skvettenhet/lydømfintlighet"}, {v:4, t:"4 - Sterke hallusinasjoner"}, {v:5, t:"5 - Sterke og vedvarende hallusinasjoner"}, {v:6, t:"6 - Ekstremt sterke hallusinasjoner"}, {v:7, t:"7 - Kontinuerlige hallusinasjoner"} ] },
             { id: "ciwa_8", title: "Visuelle forstyrrelser", tooltip: "Spør: \"Virker lyset sterkere enn vanlig? Oppleves farger annerledes enn vanlig? Gjør det vondt for øynene? Ser du noe som er urovekkende? Ser du ting som du vet ikke er der?\"", options: [ {v:0, t:"0 - Ingen"}, {v:1, t:"1 - Veldig mild lysømfintlighet"}, {v:2, t:"2 - Mild lysømfintlighet"}, {v:3, t:"3 - Moderat lysømfintlighet"}, {v:4, t:"4 - Sterke hallusinasjoner"}, {v:5, t:"5 - Sterke og vedvarende hallusinasjoner"}, {v:6, t:"6 - Ekstremt sterke hallusinasjoner"}, {v:7, t:"7 - Kontinuerlige hallusinasjoner"} ] },
@@ -496,6 +496,34 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
             calculateScore();
         }
 
+        function validateTemperatureInput(el, min, max) {
+            if (el.value && /^\d{2},?$/.test(el.value)) {
+                el.value = el.value.replace(',', '') + ',0';
+                showToast("Temperatur endret til " + el.value + ".", false);
+            }
+
+            validateInput(el, min, max);
+        }
+
+        function validateAbcdBloodPressure(el, min, max) {
+            validateInput(el, min, max);
+            if (!el.value) return;
+
+            var sbp = document.getElementById('abcd_sbp');
+            var dbp = document.getElementById('abcd_dbp');
+            if (!sbp || !dbp || !sbp.value || !dbp.value) return;
+
+            var sbpValue = parseFloat(sbp.value.replace(',', '.'));
+            var dbpValue = parseFloat(dbp.value.replace(',', '.'));
+            if (isNaN(sbpValue) || isNaN(dbpValue) || dbpValue <= sbpValue) return;
+
+            showToast("Diastolisk blodtrykk kan ikke v\u00e6re h\u00f8yere enn systolisk blodtrykk.", true);
+            el.value = '';
+            el.classList.remove('input-score-0', 'input-score-1', 'input-score-2');
+            calculateScore();
+            setTimeout(function() { el.focus(); }, 10);
+        }
+
         // --- FARGEOPPDATERING P? FELTER ---
         function updateInputColor(id, score, isInvalid) {
             var el = document.getElementById(id);
@@ -511,6 +539,13 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
         }
 
         // --- SKALA-LOGIKK MED MODAL ---
+        function setScaleChoice(hiddenId, radioId, value) {
+            var hidden = document.getElementById(hiddenId);
+            var radio = document.getElementById(radioId);
+            if (hidden) hidden.value = value;
+            if (radio) radio.checked = true;
+        }
+
         function handleScaleChange() {
             var select = document.getElementById('news2-scale');
             if (select.value === '2') {
@@ -526,7 +561,7 @@ return '<img class="patient-letter-logo" src="' + patientSheetLogo + '" alt="Ber
                 
                 document.getElementById('modal-btn-no').onclick = function() {
                     document.getElementById('confirm-modal').classList.remove('show');
-                    select.value = '1';
+                    setScaleChoice('news2-scale', 'news2_scale_1', '1');
                     calculateScore();
                 };
             } else {
@@ -714,6 +749,7 @@ function updateHeaderByCategory(cat){
             localStorage.setItem('scoretool-tab', tabId);
             syncChoiceTabState();
             calculateScore();
+            focusFirstScoringControl(tabId);
         }
         
         // Forma j?sira (Reset form)
@@ -730,7 +766,8 @@ function resetForm(silent) {
                 radios[j].checked = false;
             }
             
-            document.getElementById('news2-scale').value = "1";
+            setScaleChoice('news2-scale', 'news2_scale_1', '1');
+            setScaleChoice('qsn_scale', 'qsn_scale_1', '1');
             document.getElementById('tews-age-unit').value = "y";
             document.getElementById('tews-active-group').innerText = "";
             syncTEWSFieldState(-1);
@@ -790,7 +827,7 @@ function resetForm(silent) {
                     optionsHtml += '<option value="' + opt.v + '">' + opt.t + '</option>';
                 }
                 
-                var tooltipHtml = item.tooltip ? '<span class="tooltip-icon" tabindex="0" aria-label="' + escapeAttr(item.tooltip) + '" title="' + escapeAttr(item.tooltip) + '" data-tooltip="' + escapeAttr(item.tooltip) + '">i</span>' : '';
+                var tooltipHtml = item.tooltip ? '<span class="tooltip-icon" tabindex="0" aria-label="' + escapeAttr(item.tooltip) + '" data-tooltip="' + escapeAttr(item.tooltip) + '">i</span>' : '';
                 
                 container.innerHTML += 
                     '<div class="input-card ciwa-card">' +
@@ -904,7 +941,7 @@ function resetForm(silent) {
                 var input = document.getElementById(label.getAttribute('for'));
                 if (!input || (input.type !== 'radio' && input.type !== 'checkbox')) continue;
 
-                label.tabIndex = input.disabled ? -1 : 0;
+                label.tabIndex = input.disabled || shouldSkipChoiceFocus(input) ? -1 : 0;
                 label.setAttribute('role', input.type);
                 label.setAttribute('aria-disabled', input.disabled ? 'true' : 'false');
 
@@ -945,6 +982,11 @@ function resetForm(silent) {
             }
         }
 
+        function shouldSkipChoiceFocus(input) {
+            if (!input) return true;
+            return input.tabIndex < 0 || input.name === 'news2_scale_choice' || input.name === 'qsn_scale_choice';
+        }
+
         function syncChoiceTabState() {
             var labels = document.querySelectorAll('label[for]');
             for (var i = 0; i < labels.length; i++) {
@@ -952,9 +994,38 @@ function resetForm(silent) {
                 var input = document.getElementById(label.getAttribute('for'));
                 if (!input || (input.type !== 'radio' && input.type !== 'checkbox')) continue;
                 var enabled = !input.disabled && isElementVisible(label);
-                label.tabIndex = enabled ? 0 : -1;
+                label.tabIndex = enabled && !shouldSkipChoiceFocus(input) ? 0 : -1;
                 label.setAttribute('aria-disabled', enabled ? 'false' : 'true');
             }
+        }
+
+        function getFocusableScoringElement(section) {
+            if (!section) return null;
+            var candidates = section.querySelectorAll('input, select, textarea, button, label[for]');
+            for (var i = 0; i < candidates.length; i++) {
+                var el = candidates[i];
+                if (!isElementVisible(el) || el.disabled) continue;
+
+                if (el.tagName === 'LABEL') {
+                    var input = document.getElementById(el.getAttribute('for'));
+                    if (!input || input.disabled || shouldSkipChoiceFocus(input)) continue;
+                    if (input.type !== 'radio' && input.type !== 'checkbox') continue;
+                    return el;
+                }
+
+                if (el.type === 'hidden' || el.type === 'radio' || el.type === 'checkbox') continue;
+                if (el.tabIndex < 0) continue;
+                return el;
+            }
+            return null;
+        }
+
+        function focusFirstScoringControl(tabId) {
+            window.setTimeout(function() {
+                var section = document.getElementById(tabId);
+                var target = getFocusableScoringElement(section);
+                if (target) target.focus({ preventScroll: true });
+            }, 0);
         }
 
         function syncTEWSFieldState(ageGroup) {
@@ -1219,7 +1290,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                             score = "-";
                             interpretation = "qSOFA ≥ 2. Fyll inn NEWS2 for videre risikovurdering.";
                             colorClass = "score-high";
-                            setQsofaNews2Advice(buildMissingText(qNews.missing, 7), "warn");
+                            setQsofaNews2Advice("Fyll inn felter i NEWS2 ved mistanke om sepsis.", "warn");
                         }
                     }
                 } else {
@@ -1731,6 +1802,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             updateCopyButtonState(score);
             updateScoreBreakdownTooltip();
         }
+
         function setTriageInterpretation(score, hasSingleRed) {
             if (score <= 0) return { text: "Grønn - haster ikke", cls: "score-0" };
             if (score <= 2) return { text: "Gul - lege innen 2 timer", cls: "score-low" };
@@ -1998,7 +2070,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                             score = "-";
                             interpretation = "qSOFA ≥ 2. Fyll inn NEWS2 for videre risikovurdering.";
                             colorClass = "score-high";
-                            setQsofaNews2Advice(buildMissingText(qNews2.missing, 7), "warn");
+                            setQsofaNews2Advice("Fyll inn felter i NEWS2 ved mistanke om sepsis.", "warn");
                         }
                     }
                 } else {
@@ -2582,7 +2654,12 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
             for (var i = 0; i < textInputs.length; i++) {
                 if (textInputs[i].value !== '') return true;
             }
-            if (section.querySelector('input[type="radio"]:checked, input[type="checkbox"]:checked')) return true;
+            var checkedChoices = section.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked');
+            for (var c = 0; c < checkedChoices.length; c++) {
+                var choiceName = checkedChoices[c].name || '';
+                if (choiceName === 'news2_scale_choice' || choiceName === 'qsn_scale_choice') continue;
+                return true;
+            }
             var selects = section.querySelectorAll('select');
             for (var j = 0; j < selects.length; j++) {
                 if (selects[j].disabled || selects[j].value === '') continue;
@@ -2623,7 +2700,7 @@ var arr = [respS, spo2S, bpS, pulsS, avpu, tempS];
                         calculateScore();
                     },
                     onCancel: function() {
-                        select.value = '1';
+                        setScaleChoice('news2-scale', 'news2_scale_1', '1');
                         calculateScore();
                     }
                 });
